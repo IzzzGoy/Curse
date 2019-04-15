@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <iostream>
+#include <unistd.h>
 
 class client
 {
@@ -17,6 +18,7 @@ public:
 
     bool StartClient(char address[]);
     void SendToServer();
+    void CloseClient();
     client();
 };
 

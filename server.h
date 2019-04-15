@@ -24,29 +24,48 @@ class server
 {
 private:
 
-
     //vector<RealPlay> players;
+    enum State
+    {
+        START,
+        WAITING,
+        STARTGAME,
+        RESULTS,
+        END
+    };
+
     int serverSock;
     struct sockaddr_in addr;
     int grid[400] = {0};
     //vector<RealPlay*> players;
     RealPlay **players;
-    int serverState;
+    State serverState;
     int numbOfPlayers;
-    pthread_t tmp;
-
+    pthread_t* threads;
+    //vector<pthread_t> threads;
+    //pthread_t tmp;
 public:
+    struct Coordinats
+    {
+        double* Y[4];
+        double* X[4];
+    };
 
     struct Contex
     {
+        Coordinats* coord;
+        int* grid;
         RealPlay* player;
-        int* serverState;
-        Contex(RealPlay* _player,int &st)
+        State* serverState;
+        Contex(RealPlay* _player,State &st,int*table,Coordinats* coords)
         {
+            coord = coords;
+            grid = table;
             player = _player;
             serverState = &st;
         }
     };
+    Coordinats* coordinats;
     static void* SelfServis(void* args);
     bool DoServer(int numbOfPlayers);
 

@@ -29,7 +29,15 @@ private slots:
 
     void on_connectButton2_clicked();
 
+    void on_toGameButton_clicked();
+
+    void on_plusButton_clicked();
+
+    void on_minusButton_clicked();
+
 private:
+    int numbOfPlayers;
+    server* _server;
     client _client;
     Ui::MainWindow *ui;
 };
