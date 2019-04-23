@@ -19,15 +19,17 @@ public:
     int Y;
     double realX;
     double realY;
-    int sleepTime;
     double speed;
     int score;
     int socket;
+    int* grid;
+
+    void Step();
 
     RealPlay(int* grid,int sock);
     //void SetDirection(char s);
 
-    void Move (int *grid);
+    void Move ();
 
 };
 

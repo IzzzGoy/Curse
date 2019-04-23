@@ -1,6 +1,6 @@
 #include "realplay.h"
 
-RealPlay::RealPlay(int *grid,int sock)
+RealPlay::RealPlay(int *_grid,int sock)
 {
     srand(time(NULL));
     int tmpX,tmpY;
@@ -17,76 +17,78 @@ RealPlay::RealPlay(int *grid,int sock)
     score = 0;
     socket = sock;
     speed = 0.1;
+    grid = _grid;
 }
 
-void RealPlay::Move(int *grid)
+void RealPlay::Move()
 {
     int N = 20;
     switch (this->direction)
     {
     case 'u':
-        if(X>0)X--;
+        if(grid[(X - 1)*N + Y] != 0)X--;
         if(grid[X*N + Y] == 3)
         {
             score++;
             grid[X*N + Y] = 2;
         }
-        /*while (realX != X)
-        {
-            realX -= speed;
-            std::chrono::milliseconds dude(333);
-            std::this_thread::sleep_for(dude);
-        }*/
+
         break;
     case 'd':
-        if(X<20)X++;
+        if(grid[(X + 1) * N + Y] != 0)X++;
         if(grid[X*N + Y] == 3)
         {
             score++;
             grid[X*N + Y] = 2;
         }
-        /*while (realX != X)
-        {
-            realX += speed;
-            std::chrono::milliseconds dude(33);
-            std::this_thread::sleep_for(dude);
-        }*/
 
         break;
     case 'l':
-        if(Y>0)Y--;
+        if(grid[X*N + Y - 1] != 0)Y--;
         if(grid[X*N + Y] == 3)
         {
             score++;
             grid[X*N + Y] = 2;
         }
-        /*while (realY != Y)
-        {
-            realY -= speed;
-            std::chrono::milliseconds dude(33);
-            std::this_thread::sleep_for(dude);
-        }*/
+
         break;
     case 'r':
-        if(Y<20)Y++;
+        if(grid[X * N + Y + 1] != 0)Y++;
         if(grid[X*N + Y] == 3)
         {
             score++;
             grid[X*N + Y] = 2;
         }
-        /*while (realY != Y)
-        {
-            realY += speed;
-            std::chrono::milliseconds dude(33);
-            std::this_thread::sleep_for(dude);
-        }*/
+
         break;
     default:
         break;
     }
 }
 
-/*void RealPlay::SetDirection(char s)
+void RealPlay::Step()
 {
-    this->direction = s;
-}*/
+    int N = 20;
+    switch (this->direction)
+    {
+    case 'u':
+        realX -= speed;
+        break;
+
+    case 'd':
+        realX += speed;
+        break;
+
+    case 'l':
+        realY -= speed;
+        break;
+
+    case 'r':
+        realY += speed;
+        break;
+
+    default:
+        break;
+    }
+}
+

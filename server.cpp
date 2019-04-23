@@ -29,70 +29,76 @@ server::server()
 
 }
 
-void* server::SelfServis(void* args)
+void* server::BotServis(void *args)
 {
-
-    Contex* player = (Contex*) args;
+    BotInfo* botInf = reinterpret_cast<BotInfo*>(args);
 
     chrono::milliseconds dude(333);
 
-    chrono::time_point<chrono::system_clock> start;
+    while(true)
+    {
+        switch (*botInf->serverState)
+        {
+        case STARTGAME:
+            botInf->bot->Move();
 
-    chrono::time_point<chrono::system_clock> end;
+            while(botInf->bot->X != botInf->bot->realX && botInf->bot->Y != botInf->bot->realY)
+            {
+                botInf->bot->Step();
+                std::this_thread::sleep_for(dude);
+            }
+            break;
+        default:
+            std::this_thread::sleep_for(dude);
+            break;
+        }
+    }
+
+}
+
+
+
+void* server::SelfServis(void* args)
+{
+
+    Contex* info = (Contex*) args;
+
+    chrono::milliseconds dude(333);
+    fcntl(info->player->socket, F_SETFL, O_NONBLOCK);
+
 
     char b = 'B';
 
     while(true)
     {
-        switch (*player->serverState)
+        switch (*info->serverState)
         {
         case START:
 
             break;
 
         case WAITING:
-            cout<<*player->serverState<<endl;
+            cout<<*info->serverState<<endl;
             this_thread::sleep_for(dude);
             break;
 
         case STARTGAME:
 
-            start = chrono::system_clock::now();
-            end = chrono::system_clock::now();
+            send(info->player->socket,&b,sizeof(char),0);
 
-            send(player->player->socket,&b,sizeof(char),0);
-            while(true)
+            while(*info->serverState == STARTGAME)
             {
-                recv(player->player->socket,&player->player->direction,sizeof(char),0);
 
-                player->player->Move(player->grid);
+                recv(info->player->socket,&info->player->direction,sizeof(char),0);
 
-                while(player->player->X != player->player->realX && player->player->Y != player->player->realY)
+                info->player->Move();
+
+                while(info->player->X != info->player->realX && info->player->Y != info->player->realY)
                 {
-                    if(chrono::duration_cast<chrono::minutes>(end - start).count() == 15)break;
-                    switch (player->player->direction)
-                    {
-                    case 'u':
-                        player->player->realX -= player->player->speed;
-                        std::this_thread::sleep_for(dude);
-                        break;
-                    case 'd':
-                        player->player->realX += player->player->speed;
-                        std::this_thread::sleep_for(dude);
-                        break;
-                    case 'l':
-                        player->player->realY -= player->player->speed;
-                        std::this_thread::sleep_for(dude);
-                        break;
-                    case 'r':
-                        player->player->realY += player->player->speed;
-                        std::this_thread::sleep_for(dude);
-                        break;
-                    default:
-                        break;
-                    }
+                    send(info->player->socket,info->coord,sizeof(Coordinats),0);
+                    info->player->Step();
+                    std::this_thread::sleep_for(dude);
                 }
-                end = chrono::system_clock::now();
             }
 
             break;
@@ -122,19 +128,18 @@ bool server::DoServer(int numb)
 {
     numbOfPlayers = numb;
     players = new RealPlay*[numb];
-    threads = new pthread_t[numb]; //numb заменить на 4, когда сделаю ботов
-    coordinats = new Coordinats;
+    threads = new pthread_t[4]; //numb заменить на 4, когда сделаю ботов
+    coordinats = new Coordinats(grid);
     for(int i = 0; i < numb; i++ )
     {
         int acceptSocket = accept(serverSock,0,0);
         if (acceptSocket > 0)
         {
-            RealPlay* player = new RealPlay(grid, acceptSocket);
-            players[i] = player;
-            coordinats->X[i] = &player->realX;
-            coordinats->Y[i] = &player->realY;
-            Contex* mess = new Contex(player,serverState,grid,coordinats);
-            if(pthread_create(&threads[i],0,&server::SelfServis, reinterpret_cast<void*>(mess)) != 0)
+            players[i] = new RealPlay(grid, acceptSocket);
+            coordinats->X[i] = &players[i]->realX;
+            coordinats->Y[i] = &players[i]->realY;
+            Contex* mess = new Contex(players[i],serverState,grid,coordinats);
+            if(pthread_create(&threads[i],0,&server::SelfServis, static_cast<void*>(mess)) != 0)
             {
                 perror("Bad thread create");
                 exit(-1);
@@ -142,7 +147,16 @@ bool server::DoServer(int numb)
         }
 
     }
-    // подключение ботов
+    bots = new BotPlayer*[4-numb];
+    for(int i = numb;i < 4; i++)
+    {
+        bots[i - numb] = new BotPlayer(grid);
+        coordinats->X[i - numb] = &bots[i - numb]->realX;
+        coordinats->Y[i - numb] = &bots[i - numb]->realY;
+        BotInfo bot = BotInfo(&serverState,bots[i - numb]);
+        pthread_create(&threads[i],0,BotServis,static_cast<void*>(&bot));
+
+    }
 
     serverState = WAITING;
 
@@ -151,8 +165,23 @@ bool server::DoServer(int numb)
 
     serverState = STARTGAME;
 
-    chrono::minutes game(10);
-    this_thread::sleep_for(game);
+    int summ;
+    do
+    {
+      summ = 0;
+      for(size_t i = 0; i < numbOfPlayers; i++)
+      {
+          summ += players[i]->score;
+      }
+      for(size_t i = 0; i < 4 - numbOfPlayers; i++)
+      {
+          summ += bots[i]->score;
+      }
+
+      chrono::seconds check(1);
+      this_thread::sleep_for(check);
+
+    }while(summ != 210);
 
     serverState = RESULTS;
 
@@ -161,7 +190,7 @@ bool server::DoServer(int numb)
     serverState = END;
 
     close(serverSock);
-    for(int i = 0;i < numb ;i++)    //Аналогично с потоками
+    for(int i = 0;i < 4 ;i++)    //Аналогично с потоками
     {
         int ir;
         pthread_join(threads[i],(void**)&ir);
@@ -185,6 +214,10 @@ server::~server()
     delete[] players;
 
     delete[] threads;
+
+    delete[] bots;
+
+    delete coordinats;
 }
 
 
