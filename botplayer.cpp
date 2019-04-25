@@ -47,7 +47,7 @@ void BotPlayer::Move()
     switch (direction)
     {
     case 'u':
-        if(grid[(X - 1)*N + Y] != 0)
+        if(grid[(X - 1)*N + Y] != 0 && X > 0)
         {
             while(direction == 'u')
             {
@@ -75,9 +75,13 @@ void BotPlayer::Move()
                 }
             }
         }
+        else
+        {
+            X--;
+        }
         break;
     case 'd':
-        if(grid[(X + 1) * N + Y] != 0)
+        if(grid[(X + 1) * N + Y] != 0 && X < 20)
         {
             while(direction == 'd')
             {
@@ -105,9 +109,13 @@ void BotPlayer::Move()
                 }
             }
         }
+        else
+        {
+            X++;
+        }
         break;
     case 'l':
-        if(grid[X*N + Y - 1] != 0)
+        if(grid[X*N + Y - 1] != 0 && Y > 0)
         {
             while(direction == 'l')
             {
@@ -135,11 +143,15 @@ void BotPlayer::Move()
                 }
             }
         }
+        else
+        {
+            Y--;
+        }
 
         break;
 
     case 'r':
-        if(grid[X * N + Y + 1] != 0)
+        if(grid[X * N + Y + 1] != 0 && Y < 20)
         {
             while(direction == 'r')
             {
@@ -166,6 +178,10 @@ void BotPlayer::Move()
                     break;
                 }
             }
+        }
+        else
+        {
+            Y++;
         }
         break;
     default:
