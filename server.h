@@ -38,8 +38,8 @@ private:
     int serverSock;
     struct sockaddr_in addr;
     int grid[400] = {0};
-    //vector<RealPlay*> players;
-    RealPlay **players;
+    vector<RealPlay> players;
+    //RealPlay *players;
     BotPlayer **bots;
     State serverState;
     int numbOfPlayers;
@@ -66,8 +66,8 @@ public:
             {
                 delete X[i];
             }
-            delete X;
-            delete Y;
+            delete[] X;
+            delete[] Y;
             delete[] grid;
         }
     };

@@ -1,16 +1,19 @@
 #include "botplayer.h"
+#include <iostream>
 
 BotPlayer::BotPlayer(int* _grid)
 {
+    std::cout << "bot _grid: " << _grid << std::endl;
     grid = _grid;
+    std::cout << "bot new grid: " << grid << std::endl;
     srand(time(NULL));
     int tmpX,tmpY;
-    do
+   do
     {
         tmpX = rand() % 20;
         tmpY = rand() % 20;
     }
-    while(grid[20*tmpX + tmpY] != 1);
+    while(grid[20*tmpX + tmpY] != 0);
     X = tmpX;
     Y = tmpY;
     realX = X;

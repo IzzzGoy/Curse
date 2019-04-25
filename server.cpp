@@ -12,7 +12,7 @@ server::server()
         exit(-1);
     }
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(1488);
+    addr.sin_port = htons(9618);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     int bindStatus = bind(serverSock,(struct sockaddr*)&addr,sizeof(addr));
@@ -40,6 +40,7 @@ void* server::BotServis(void *args)
         switch (*botInf->serverState)
         {
         case STARTGAME:
+            //cout<<botInf->bot->realX<<endl;
             botInf->bot->Move();
 
             while(botInf->bot->X != botInf->bot->realX && botInf->bot->Y != botInf->bot->realY)
@@ -47,7 +48,16 @@ void* server::BotServis(void *args)
                 botInf->bot->Step();
                 std::this_thread::sleep_for(dude);
             }
+        case WAITING:
             break;
+
+        case RESULTS:
+            break;
+
+        case END:
+            pthread_exit(0);
+            break;
+
         default:
             std::this_thread::sleep_for(dude);
             break;
@@ -127,7 +137,8 @@ void* server::SelfServis(void* args)
 bool server::DoServer(int numb)
 {
     numbOfPlayers = numb;
-    players = new RealPlay*[numb];
+//    players = new RealPlay[numb];
+    players.resize(numbOfPlayers);
     threads = new pthread_t[4]; //numb заменить на 4, когда сделаю ботов
     coordinats = new Coordinats(grid);
     for(int i = 0; i < numb; i++ )
@@ -135,10 +146,10 @@ bool server::DoServer(int numb)
         int acceptSocket = accept(serverSock,0,0);
         if (acceptSocket > 0)
         {
-            players[i] = new RealPlay(grid, acceptSocket);
-            coordinats->X[i] = &players[i]->realX;
-            coordinats->Y[i] = &players[i]->realY;
-            Contex* mess = new Contex(players[i],serverState,grid,coordinats);
+            players[i].NRealPlay(grid, acceptSocket);
+            coordinats->X[i] = &players[i].realX;
+            coordinats->Y[i] = &players[i].realY;
+            Contex* mess = new Contex(&players[i],serverState,grid,coordinats);
             if(pthread_create(&threads[i],0,&server::SelfServis, static_cast<void*>(mess)) != 0)
             {
                 perror("Bad thread create");
@@ -171,7 +182,7 @@ bool server::DoServer(int numb)
       summ = 0;
       for(size_t i = 0; i < numbOfPlayers; i++)
       {
-          summ += players[i]->score;
+          summ += players[i].score;
       }
       for(size_t i = 0; i < 4 - numbOfPlayers; i++)
       {
@@ -181,7 +192,7 @@ bool server::DoServer(int numb)
       chrono::seconds check(1);
       this_thread::sleep_for(check);
 
-    }while(summ != 210);
+    }while(summ != 0);                //Не 0!!!!!
 
     serverState = RESULTS;
 
@@ -189,7 +200,7 @@ bool server::DoServer(int numb)
 
     serverState = END;
 
-    close(serverSock);
+
     for(int i = 0;i < 4 ;i++)    //Аналогично с потоками
     {
         int ir;
@@ -200,6 +211,7 @@ bool server::DoServer(int numb)
             exit(0);
         }
     }
+    close(serverSock);
 
     return true;
 
@@ -207,11 +219,12 @@ bool server::DoServer(int numb)
 
 server::~server()
 {
-    for(int i = 0;i < this->numbOfPlayers;i++)
+    /*for(int i = 0;i < this->numbOfPlayers;i++)
     {
         delete players[i];
-    }
-    delete[] players;
+    }*/
+    //delete[] players;
+    players.clear();
 
     delete[] threads;
 

@@ -1,15 +1,19 @@
 #include "realplay.h"
-
-RealPlay::RealPlay(int *_grid,int sock)
+#include <iostream>
+void RealPlay::NRealPlay(int* _grid,int sock)
 {
     srand(time(NULL));
+    std::cout << "_grid: " << _grid << std::endl;
+    grid = _grid;
+    std::cout << "new grid: " << grid << std::endl;
+    std::cout << "0 " << grid[0];
     int tmpX,tmpY;
     do
     {
         tmpX = rand() % 20;
         tmpY = rand() % 20;
     }
-    while(grid[20*tmpX + tmpY] != 1);
+    while(grid[20*tmpX + tmpY] != 0);
     X = tmpX;
     Y = tmpY;
     realX = X;
@@ -17,7 +21,7 @@ RealPlay::RealPlay(int *_grid,int sock)
     score = 0;
     socket = sock;
     speed = 0.1;
-    grid = _grid;
+
 }
 
 void RealPlay::Move()
