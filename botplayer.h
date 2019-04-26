@@ -5,10 +5,13 @@
 #include <thread>
 #include <chrono>
 
+
 class BotPlayer
 {
 private:
-
+    bool ChangeDir();
+    char posDir[4] = {'u','d','l','r'};
+    int N =20;
 public:
     int* grid;
     int X,Y;

@@ -26,7 +26,7 @@ public:
 
     void Step();
 
-    void NRealPlay(int *grid, int sock);
+    RealPlay(int *grid, int sock);
     //void SetDirection(char s);
 
     void Move ();

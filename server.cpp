@@ -12,7 +12,7 @@ server::server()
         exit(-1);
     }
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(1618);
+    addr.sin_port = htons(5718);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     int bindStatus = bind(serverSock,(struct sockaddr*)&addr,sizeof(addr));
@@ -93,7 +93,7 @@ void* server::SelfServis(void* args)
             break;
 
         case STARTGAME:
-
+            cout<<*info->serverState<<endl;
             send(info->player->socket,&b,sizeof(char),0);
 
             while(*info->serverState == STARTGAME)
@@ -146,10 +146,10 @@ bool server::DoServer(int numb)
         int acceptSocket = accept(serverSock,0,0);
         if (acceptSocket > 0)
         {
-            players[i].NRealPlay(grid, acceptSocket);
-            coordinats->X[i] = &players[i].realX;
-            coordinats->Y[i] = &players[i].realY;
-            Contex* mess = new Contex(&players[i],serverState,grid,coordinats);
+            players[i] = new RealPlay(grid, acceptSocket);
+            coordinats->X[i] = &players[i]->realX;
+            coordinats->Y[i] = &players[i]->realY;
+            Contex* mess = new Contex(players[i],serverState,grid,coordinats);
             if(pthread_create(&threads[i],0,&server::SelfServis, static_cast<void*>(mess)) != 0)
             {
                 perror("Bad thread create");
@@ -158,14 +158,17 @@ bool server::DoServer(int numb)
         }
 
     }
-    bots = new BotPlayer*[4-numb];
+//    bots = new BotPlayer*[4-numb];
+    bots.resize(4-numb);
     for(int i = numb;i < 4; i++)
     {
-        bots[i - numb] = new BotPlayer(grid);
-        coordinats->X[i - numb] = &bots[i - numb]->realX;
-        coordinats->Y[i - numb] = &bots[i - numb]->realY;
-        BotInfo bot = BotInfo(&serverState,bots[i - numb]);
-        pthread_create(&threads[i],0,BotServis,static_cast<void*>(&bot));
+//        BotPlayer tmp(grid);
+        bots[i - numb] = new BotInfo(&serverState,new BotPlayer(grid));
+
+        coordinats->X[i - numb] = &bots[i - numb]->bot->realX;
+        coordinats->Y[i - numb] = &bots[i - numb]->bot->realY;
+        //BotInfo bot = BotInfo(&serverState,bots[i - numb]);
+        pthread_create(&threads[i],0,BotServis,static_cast<void*>(bots[i - 4]));
 
     }
 
@@ -182,11 +185,11 @@ bool server::DoServer(int numb)
       summ = 0;
       for(size_t i = 0; i < numbOfPlayers; i++)
       {
-          summ += players[i].score;
+          summ += players[i]->score;
       }
       for(size_t i = 0; i < 4 - numbOfPlayers; i++)
       {
-          summ += bots[i]->score;
+          summ += bots[i]->bot->score;
       }
 
       chrono::seconds check(1);
@@ -228,7 +231,16 @@ server::~server()
 
     delete[] threads;
 
-    delete[] bots;
+    for(int i = 0 ; i < bots.size(); i++)
+    {
+        delete bots[i];
+    }
+    bots.clear();
+    for(int i = 0 ; i < players.size(); i++)
+    {
+        delete players[i];
+    }
+    players.clear();
 
     delete coordinats;
 }

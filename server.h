@@ -38,9 +38,10 @@ private:
     int serverSock;
     struct sockaddr_in addr;
     int grid[400] = {0};
-    vector<RealPlay> players;
+    vector<RealPlay*> players;
     //RealPlay *players;
-    BotPlayer **bots;
+//    BotPlayer **bots;
+
     State serverState;
     int numbOfPlayers;
     pthread_t* threads;
@@ -96,8 +97,12 @@ public:
             serverState =_serverState;
             bot = _bot;
         }
+        ~BotInfo()
+        {
+            delete bot;
+        }
     };
-
+    vector<BotInfo*> bots;
     Coordinats* coordinats;
     static void* SelfServis(void* args);
     static void* BotServis(void* args);

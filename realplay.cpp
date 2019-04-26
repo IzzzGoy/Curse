@@ -1,6 +1,6 @@
 #include "realplay.h"
 #include <iostream>
-void RealPlay::NRealPlay(int* _grid,int sock)
+RealPlay::RealPlay(int* _grid,int sock)
 {
     srand(time(NULL));
     std::cout << "_grid: " << _grid << std::endl;
@@ -21,6 +21,7 @@ void RealPlay::NRealPlay(int* _grid,int sock)
     score = 0;
     socket = sock;
     speed = 0.1;
+    direction = 'u';
 
 }
 

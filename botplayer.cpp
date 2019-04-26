@@ -38,6 +38,7 @@ BotPlayer::BotPlayer(int* _grid)
     default:
         break;
     }
+    direction = 'u';
 }
 
 void BotPlayer::Move()
@@ -49,31 +50,8 @@ void BotPlayer::Move()
     case 'u':
         if(grid[(X - 1)*N + Y] != 0 && X > 0)
         {
-            while(direction == 'u')
-            {
-                tmp = rand() % 4;
-                switch (tmp)
-                {
-                case 0:
-                    direction = 'u';
-                    Move();
-                    break;
-                case 1:
-                    direction = 'd';
-                    Move();
-                    break;
-                case 2:
-                    direction = 'l';
-                    Move();
-                    break;
-                case 3:
-                    direction = 'r';
-                    Move();
-                    break;
-                default:
-                    break;
-                }
-            }
+            ChangeDir();
+            Move();
         }
         else
         {
@@ -83,31 +61,8 @@ void BotPlayer::Move()
     case 'd':
         if(grid[(X + 1) * N + Y] != 0 && X < 20)
         {
-            while(direction == 'd')
-            {
-                tmp = rand() % 4;
-                switch (tmp)
-                {
-                case 0:
-                    direction = 'u';
-                    Move();
-                    break;
-                case 1:
-                    direction = 'd';
-                    Move();
-                    break;
-                case 2:
-                    direction = 'l';
-                    Move();
-                    break;
-                case 3:
-                    direction = 'r';
-                    Move();
-                    break;
-                default:
-                    break;
-                }
-            }
+            ChangeDir();
+            Move();
         }
         else
         {
@@ -117,31 +72,8 @@ void BotPlayer::Move()
     case 'l':
         if(grid[X*N + Y - 1] != 0 && Y > 0)
         {
-            while(direction == 'l')
-            {
-                tmp = rand() % 4;
-                switch (tmp)
-                {
-                case 0:
-                    direction = 'u';
-                    Move();
-                    break;
-                case 1:
-                    direction = 'd';
-                    Move();
-                    break;
-                case 2:
-                    direction = 'l';
-                    Move();
-                    break;
-                case 3:
-                    direction = 'r';
-                    Move();
-                    break;
-                default:
-                    break;
-                }
-            }
+            ChangeDir();
+            Move();
         }
         else
         {
@@ -153,31 +85,8 @@ void BotPlayer::Move()
     case 'r':
         if(grid[X * N + Y + 1] != 0 && Y < 20)
         {
-            while(direction == 'r')
-            {
-                tmp = rand() % 4;
-                switch (tmp)
-                {
-                case 0:
-                    direction = 'u';
-                    Move();
-                    break;
-                case 1:
-                    direction = 'd';
-                    Move();
-                    break;
-                case 2:
-                    direction = 'l';
-                    Move();
-                    break;
-                case 3:
-                    direction = 'r';
-                    Move();
-                    break;
-                default:
-                    break;
-                }
-            }
+            ChangeDir();
+            Move();
         }
         else
         {
@@ -187,6 +96,30 @@ void BotPlayer::Move()
     default:
         break;
     }
+}
+
+bool BotPlayer::ChangeDir()
+{
+
+    bool tmp[4] = {true};
+
+    if(grid[(X - 1)*N + Y] != 0 && X > 0)tmp[0] = false;
+
+    if(grid[(X + 1) * N + Y] != 0 && X < 20)tmp[1] = false;
+
+    if(grid[X*N + Y - 1] != 0 && Y > 0)tmp[2] = false;
+
+    if(grid[X * N + Y + 1] != 0 && Y < 20)tmp[3] = false;
+
+    size_t mp = rand()% 4;
+    size_t i = mp++;
+
+    while(mp != i)
+    {
+        if(i > 3) i = 0;
+        if(tmp[i])direction = posDir[i];
+    }
+
 }
 void BotPlayer::Step()
 {
