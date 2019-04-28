@@ -102,7 +102,7 @@ public:
             delete bot;
         }
     };
-    vector<BotInfo*> bots;
+    vector<BotPlayer*> bots;
     Coordinats* coordinats;
     static void* SelfServis(void* args);
     static void* BotServis(void* args);

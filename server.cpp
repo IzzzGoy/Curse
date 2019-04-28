@@ -35,20 +35,23 @@ void* server::BotServis(void *args)
 
     chrono::milliseconds dude(333);
 
+
     while(true)
     {
         switch (*botInf->serverState)
         {
         case STARTGAME:
-            //cout<<botInf->bot->realX<<endl;
+            cout<<botInf->bot->realX<<endl;
             botInf->bot->Move();
 
-            while(botInf->bot->X != botInf->bot->realX && botInf->bot->Y != botInf->bot->realY)
+            while(!(botInf->bot->X != botInf->bot->realX && botInf->bot->Y != botInf->bot->realY))
             {
                 botInf->bot->Step();
                 std::this_thread::sleep_for(dude);
             }
+            break;
         case WAITING:
+            std::this_thread::sleep_for(dude);
             break;
 
         case RESULTS:
@@ -118,10 +121,11 @@ void* server::SelfServis(void* args)
             break;
 
         case END:
-
+            pthread_exit(0);
             break;
 
         default:
+            std::this_thread::sleep_for(dude);
             break;
         }
     }
@@ -163,12 +167,12 @@ bool server::DoServer(int numb)
     for(int i = numb;i < 4; i++)
     {
 //        BotPlayer tmp(grid);
-        bots[i - numb] = new BotInfo(&serverState,new BotPlayer(grid));
+        bots[i - numb] = new BotPlayer(grid);
 
-        coordinats->X[i - numb] = &bots[i - numb]->bot->realX;
-        coordinats->Y[i - numb] = &bots[i - numb]->bot->realY;
-        //BotInfo bot = BotInfo(&serverState,bots[i - numb]);
-        pthread_create(&threads[i],0,BotServis,static_cast<void*>(bots[i - 4]));
+        coordinats->X[i] = &bots[i - numb]->realX;
+        coordinats->Y[i] = &bots[i - numb]->realY;
+        BotInfo* bot = new BotInfo(&serverState,bots[i - numb]);
+        pthread_create(&threads[i],0,BotServis,static_cast<void*>(bot));
 
     }
 
@@ -189,7 +193,7 @@ bool server::DoServer(int numb)
       }
       for(size_t i = 0; i < 4 - numbOfPlayers; i++)
       {
-          summ += bots[i]->bot->score;
+          summ += bots[i]->score;
       }
 
       chrono::seconds check(1);
@@ -206,8 +210,8 @@ bool server::DoServer(int numb)
 
     for(int i = 0;i < 4 ;i++)    //Аналогично с потоками
     {
-        int ir;
-        pthread_join(threads[i],(void**)&ir);
+        pthread_t tmp = threads[i];
+        pthread_join(tmp,NULL);
         if(0)
         {
             perror("Bad join thr");
@@ -241,6 +245,7 @@ server::~server()
         delete players[i];
     }
     players.clear();
+    close(serverSock);
 
     delete coordinats;
 }
