@@ -84,6 +84,7 @@ void* server::SelfServis(void* args)
 
     chrono::milliseconds dude(333);
     fcntl(info->player->socket, F_SETFL, O_NONBLOCK);
+    double x,y;
 
 
     char b = 'B';
@@ -114,10 +115,15 @@ void* server::SelfServis(void* args)
 
                 info->player->Move();
 
-                while(info->player->X != info->player->realX && info->player->Y != info->player->realY)
+                x = abs(info->player->X - info->player->realX);
+                y = abs(info->player->Y - info->player->realY);
+
+               while(!( x < 0.001 && y < 0.01) )
                 {
                     send(info->player->socket,info->coord,sizeof(Coordinats),0);
                     info->player->Step();
+                    x = abs(info->player->X - info->player->realX);
+                    y = abs(info->player->Y - info->player->realY);
                     std::this_thread::sleep_for(dude); //Задержка, чтобы time(NULL) выводил действительно случайные значения
                 }
             }
