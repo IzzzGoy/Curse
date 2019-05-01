@@ -15,7 +15,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
+void* MainWindow::serverservis(void* arg)
+{
+    serverinfo* info = (serverinfo*)arg;
+    info->_server->DoServer(info->numb);
+    *info->state = true;
+    pthread_exit(0);
+}
 
 void MainWindow::on_newgameButton_clicked()
 {
@@ -44,17 +50,21 @@ void MainWindow::on_connectButton2_clicked()
 {
     QByteArray tmp = ui->lineEditAddress->text().toLocal8Bit();
     _client.StartClient(tmp.data());
-    sleep(10);
-    _client.CloseClient();
-    exit(0);
+    ui->stackedWidget->setCurrentIndex(3);
+//    sleep(10);
+//    _client.CloseClient();
+//    exit(0);
 }
 
 void MainWindow::on_toGameButton_clicked()
 {
-    _server->DoServer(numbOfPlayers);
-    _client.CloseClient();
-    exit(0);
-    //   ui->stackedWidget->setCurrentIndex(0);
+    pthread_t tmp;
+    serv = new serverinfo(numbOfPlayers,_server,&state);
+    pthread_create(&tmp,0,serverservis,static_cast<void*>(&serv));
+//    _server->DoServer(numbOfPlayers);
+//    _client.CloseClient();
+//    exit(0);
+    ui->stackedWidget->setCurrentIndex(3);
 }
 
 void MainWindow::on_plusButton_clicked()

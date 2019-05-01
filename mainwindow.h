@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <server.h>
 #include <client.h>
+#include <pthread.h>
 
 namespace Ui {
 class MainWindow;
@@ -16,6 +17,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+        static void* serverservis(void* arg);
 
 private slots:
 
@@ -35,11 +37,30 @@ private slots:
 
     void on_minusButton_clicked();
 
+
+
 private:
     int numbOfPlayers;
     server* _server;
     client _client;
     Ui::MainWindow *ui;
+    bool state = false;
+
+
+
+    struct serverinfo
+    {
+        bool* state;
+        server* _server;
+        int numb;
+        serverinfo(int numbOf,server* serv,bool* m)
+        {
+            numb = numbOf;
+            _server = serv;
+            state = m;
+        }
+    };
+    serverinfo* serv;
 };
 
 #endif // MAINWINDOW_H

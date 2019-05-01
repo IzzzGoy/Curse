@@ -48,7 +48,7 @@ void BotPlayer::Move()
     switch (direction)
     {
     case 'u':
-        if(grid[(X - 1)*N + Y] != 0 && X > 0)
+        if(grid[(X - 1)*N + Y] != 0 && X == 0)
         {
             ChangeDir();
             Move();
@@ -70,7 +70,7 @@ void BotPlayer::Move()
         }
         break;
     case 'l':
-        if(grid[X*N + Y - 1] != 0 && Y > 0)
+        if(grid[X*N + Y - 1] != 0 && Y == 0)
         {
             ChangeDir();
             Move();
@@ -103,13 +103,17 @@ bool BotPlayer::ChangeDir()
 
     bool tmp[4] = {true};
 
-    if(grid[(X - 1)*N + Y] != 0 && X > 0)tmp[0] = false;
+    if(grid[(X - 1)*N + Y] != 0 && X == 0)tmp[0] = false;
+    else tmp[0] = true;
 
     if(grid[(X + 1) * N + Y] != 0 && X < 20)tmp[1] = false;
+    else tmp[1] = true;
 
-    if(grid[X*N + Y - 1] != 0 && Y > 0)tmp[2] = false;
+    if(grid[X*N + Y - 1] != 0 && Y == 0)tmp[2] = false;
+    else tmp[2] = true;
 
     if(grid[X * N + Y + 1] != 0 && Y < 20)tmp[3] = false;
+    else tmp[3] = true;
 
     size_t mp = rand()% 4;
     size_t i = mp++;
@@ -117,7 +121,11 @@ bool BotPlayer::ChangeDir()
     while(mp != i)
     {
         if(i > 3) i = 0;
-        if(tmp[i])direction = posDir[i];
+        if(tmp[i])
+        {
+            direction = posDir[i];
+            break;
+        }
     }
 
 }

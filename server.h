@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <thread>
 #include <vector>
+#include <cmath>
 
 #include "realplay.h"
 #include "botplayer.h"
@@ -44,7 +45,9 @@ private:
 
     State serverState;
     int numbOfPlayers;
-    pthread_t* threads;
+    int numbOfBots;
+    vector<pthread_t> threads;
+    //pthread_t* threads;
     //vector<pthread_t> threads;
     //pthread_t tmp;
 public:
@@ -103,6 +106,7 @@ public:
         }
     };
     vector<BotPlayer*> bots;
+    vector<BotInfo*> botsi;
     Coordinats* coordinats;
     static void* SelfServis(void* args);
     static void* BotServis(void* args);
