@@ -45,6 +45,7 @@ private:
     client _client;
     Ui::MainWindow *ui;
     bool state = false;
+    pthread_t tmp;
 
 
 

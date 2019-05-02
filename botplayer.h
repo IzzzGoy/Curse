@@ -4,12 +4,13 @@
 #include <ctime>
 #include <thread>
 #include <chrono>
+#include <cmath>
 
 
 class BotPlayer
 {
 private:
-    bool ChangeDir();
+    void ChangeDir();
     char posDir[4] = {'u','d','l','r'};
     int N =20;
 public:
@@ -23,6 +24,7 @@ public:
     BotPlayer(int* _grid);
     void Move();
     void Step();
+    void ClearSteps();
 };
 
 #endif // BOTPLAYER_H

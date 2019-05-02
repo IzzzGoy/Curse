@@ -54,6 +54,8 @@ void* server::BotServis(void *args)
                 std::this_thread::sleep_for(dude);
                 cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;           //Проверка
             }
+            botInf->bot->ClearSteps();
+            cout<<"In the end X: "<<botInf->bot->realX<<" Y: "<<botInf->bot->realY<<endl;
             break;
         case WAITING:
             std::this_thread::sleep_for(dude);
@@ -104,7 +106,7 @@ void* server::SelfServis(void* args)
         case STARTGAME:
             for(int i = 0;i<4;i++)
             {
-                cout<<"player"<<i<<"in X: "<<*info->coord->X[i]<<" Y:"<<*info->coord->Y[i]<<endl;
+                cout<<"player "<<i<<" in X: "<<*info->coord->X[i]<<" Y:"<<*info->coord->Y[i]<<endl;
             }
             send(info->player->socket,&b,sizeof(char),0);
 
@@ -120,12 +122,14 @@ void* server::SelfServis(void* args)
 
                while(!( x < 0.001 && y < 0.01) )
                 {
+                    cout<<"Player behind X:"<<info->player->realX<<" and Y: "<<info->player->realY<<endl;
                     send(info->player->socket,info->coord,sizeof(Coordinats),0);
                     info->player->Step();
                     x = abs(info->player->X - info->player->realX);
                     y = abs(info->player->Y - info->player->realY);
                     std::this_thread::sleep_for(dude); //Задержка, чтобы time(NULL) выводил действительно случайные значения
                 }
+               info->player->ClearSteps();
             }
 
             break;
@@ -185,6 +189,7 @@ bool server::DoServer(int numb)
     bots.resize(numbOfBots);
     for(int i = numb;i < 4; i++)
     {
+        this_thread::sleep_for(threadT);
 //        BotPlayer tmp(grid);
         bots[i - numb] = new BotPlayer(grid);
 
@@ -193,7 +198,7 @@ bool server::DoServer(int numb)
         BotInfo* bot = new BotInfo(&serverState,bots[i - numb]);
         botsi[i - numb] = bot;
         pthread_create(&threads[i],0,BotServis,static_cast<void*>(botsi[i - numb]));
-        this_thread::sleep_for(threadT);
+
     }
 
     serverState = WAITING;

@@ -5,6 +5,7 @@
 #include <ctime>
 #include <thread>
 #include <chrono>
+#include <cmath>
 
 class RealPlay
 {
@@ -30,6 +31,7 @@ public:
     //void SetDirection(char s);
 
     void Move ();
+    void ClearSteps();
 
 };
 

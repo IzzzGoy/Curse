@@ -17,7 +17,8 @@ MainWindow::~MainWindow()
 
 void* MainWindow::serverservis(void* arg)
 {
-    serverinfo* info = (serverinfo*)arg;
+    serverinfo* info = static_cast<serverinfo*>(arg);
+    cout<<"Thread server adress: "<<info->_server<<endl;
     info->_server->DoServer(info->numb);
     *info->state = true;
     pthread_exit(0);
@@ -51,6 +52,8 @@ void MainWindow::on_connectButton2_clicked()
     QByteArray tmp = ui->lineEditAddress->text().toLocal8Bit();
     _client.StartClient(tmp.data());
     ui->stackedWidget->setCurrentIndex(3);
+    ui->label_3->setText(QString("%1").arg(0));
+
 //    sleep(10);
 //    _client.CloseClient();
 //    exit(0);
@@ -58,13 +61,17 @@ void MainWindow::on_connectButton2_clicked()
 
 void MainWindow::on_toGameButton_clicked()
 {
-    pthread_t tmp;
     serv = new serverinfo(numbOfPlayers,_server,&state);
-    pthread_create(&tmp,0,serverservis,static_cast<void*>(&serv));
+    cout<<"Server address: "<<_server<<endl;
+    cout<<"Info server address:: "<<serv->_server<<endl;
+    pthread_create(&tmp,0,serverservis,static_cast<void*>(serv));
 //    _server->DoServer(numbOfPlayers);
 //    _client.CloseClient();
 //    exit(0);
     ui->stackedWidget->setCurrentIndex(3);
+    ui->label_3->setText(QString("%1").arg(0));
+    pthread_join(tmp,NULL);
+    _client.CloseClient();
 }
 
 void MainWindow::on_plusButton_clicked()

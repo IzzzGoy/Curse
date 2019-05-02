@@ -44,11 +44,10 @@ BotPlayer::BotPlayer(int* _grid)
 void BotPlayer::Move()
 {
     int N = 20;
-    int tmp;
     switch (direction)
     {
     case 'u':
-        if(grid[(X - 1)*N + Y] != 0 && X == 0)
+        if(grid[(X - 1)*N + Y] != 0 && abs(X-0)<0.1 )
         {
             ChangeDir();
             Move();
@@ -56,6 +55,11 @@ void BotPlayer::Move()
         else
         {
             X--;
+            if(grid[X*N + Y] == 3)
+            {
+                score++;
+                grid[X*N + Y] = 0;
+            }
         }
         break;
     case 'd':
@@ -67,10 +71,15 @@ void BotPlayer::Move()
         else
         {
             X++;
+            if(grid[X*N + Y] == 3)
+            {
+                score++;
+                grid[X*N + Y] = 0;
+            }
         }
         break;
     case 'l':
-        if(grid[X*N + Y - 1] != 0 && Y == 0)
+        if(grid[X*N + Y - 1] != 0 && abs(Y-0)<0.1)
         {
             ChangeDir();
             Move();
@@ -78,6 +87,11 @@ void BotPlayer::Move()
         else
         {
             Y--;
+            if(grid[X*N + Y] == 3)
+            {
+                score++;
+                grid[X*N + Y] = 0;
+            }
         }
 
         break;
@@ -91,6 +105,11 @@ void BotPlayer::Move()
         else
         {
             Y++;
+            if(grid[X*N + Y] == 3)
+            {
+                score++;
+                grid[X*N + Y] = 0;
+            }
         }
         break;
     default:
@@ -98,7 +117,7 @@ void BotPlayer::Move()
     }
 }
 
-bool BotPlayer::ChangeDir()
+void BotPlayer::ChangeDir()
 {
 
     bool tmp[4] = {true};
@@ -131,7 +150,6 @@ bool BotPlayer::ChangeDir()
 }
 void BotPlayer::Step()
 {
-    int N = 20;
     switch (this->direction)
     {
     case 'u':
@@ -153,4 +171,10 @@ void BotPlayer::Step()
     default:
         break;
     }
+}
+
+void BotPlayer::ClearSteps()
+{
+    modf(realX,&realX);
+    modf(realY,&realY);
 }

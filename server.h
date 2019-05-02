@@ -55,10 +55,12 @@ public:
     {
         Coordinats(int* tmp)
         {
+            X.resize(4);
+            Y.resize(4);
             grid = tmp;
         }
-        double* Y[4];
-        double* X[4];
+        std::vector<double*> Y;
+        vector <double*> X;
         int* grid;
         ~Coordinats()
         {
@@ -70,9 +72,8 @@ public:
             {
                 delete X[i];
             }
-            delete[] X;
-            delete[] Y;
-            delete[] grid;
+            X.clear();
+            Y.clear();
         }
     };
 

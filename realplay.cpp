@@ -31,38 +31,38 @@ void RealPlay::Move()
     switch (this->direction)
     {
     case 'u':
-        if(grid[(X - 1)*N + Y] != 0)X--;
+        if(grid[(X - 1)*N + Y] == 0)X--;
         if(grid[X*N + Y] == 3)
         {
             score++;
-            grid[X*N + Y] = 2;
+            grid[X*N + Y] = 0;
         }
 
         break;
     case 'd':
-        if(grid[(X + 1) * N + Y] != 0)X++;
+        if(grid[(X + 1) * N + Y] == 0)X++;
         if(grid[X*N + Y] == 3)
         {
             score++;
-            grid[X*N + Y] = 2;
+            grid[X*N + Y] = 0;
         }
 
         break;
     case 'l':
-        if(grid[X*N + Y - 1] != 0)Y--;
+        if(grid[X*N + Y - 1] == 0)Y--;
         if(grid[X*N + Y] == 3)
         {
             score++;
-            grid[X*N + Y] = 2;
+            grid[X*N + Y] = 0;
         }
 
         break;
     case 'r':
-        if(grid[X * N + Y + 1] != 0)Y++;
+        if(grid[X * N + Y + 1] == 0)Y++;
         if(grid[X*N + Y] == 3)
         {
             score++;
-            grid[X*N + Y] = 2;
+            grid[X*N + Y] = 0;
         }
 
         break;
@@ -73,7 +73,6 @@ void RealPlay::Move()
 
 void RealPlay::Step()
 {
-    int N = 20;
     switch (this->direction)
     {
     case 'u':
@@ -97,3 +96,8 @@ void RealPlay::Step()
     }
 }
 
+void RealPlay::ClearSteps()
+{
+    modf(realX,&realX);
+    modf(realY,&realY);
+}
