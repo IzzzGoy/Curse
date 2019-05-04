@@ -7,6 +7,8 @@
 #include <chrono>
 #include <cmath>
 
+#include "semaf.h"
+
 class RealPlay
 {
 private:
@@ -15,6 +17,7 @@ private:
 //void Wait();
 
 public:
+    Semaf* sem;
     char direction;
     int X;
     int Y;
@@ -27,7 +30,7 @@ public:
 
     void Step();
 
-    RealPlay(int *grid, int sock);
+    RealPlay(int *grid, int sock,Semaf* sem);
     //void SetDirection(char s);
 
     void Move ();

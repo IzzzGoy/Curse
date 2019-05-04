@@ -72,6 +72,7 @@ void MainWindow::on_toGameButton_clicked()
     ui->label_3->setText(QString("%1").arg(0));
     pthread_join(tmp,NULL);
     _client.CloseClient();
+    exit(0);
 }
 
 void MainWindow::on_plusButton_clicked()

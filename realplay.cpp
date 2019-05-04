@@ -1,6 +1,6 @@
 #include "realplay.h"
 #include <iostream>
-RealPlay::RealPlay(int* _grid,int sock)
+RealPlay::RealPlay(int* _grid,int sock,Semaf* sem)
 {
     srand(time(NULL));
     std::cout << "_grid: " << _grid << std::endl;
@@ -22,6 +22,7 @@ RealPlay::RealPlay(int* _grid,int sock)
     socket = sock;
     speed = 0.1;
     direction = 'u';
+    this->sem = sem;
 
 }
 
@@ -31,40 +32,48 @@ void RealPlay::Move()
     switch (this->direction)
     {
     case 'u':
-        if(grid[(X - 1)*N + Y] == 0)X--;
+        if(grid[(X - 1)*N + Y] != -1 && X != 0)X--;
+        sem->Stop();
+        sem->Take(X*N + Y);
         if(grid[X*N + Y] == 3)
-        {
+        {           
             score++;
             grid[X*N + Y] = 0;
         }
-
+        sem->Get(X*N + Y);
         break;
     case 'd':
-        if(grid[(X + 1) * N + Y] == 0)X++;
+        if(grid[(X + 1) * N + Y] != -1 && X != 19)X++;
+        sem->Stop();
+        sem->Take(X*N + Y);
         if(grid[X*N + Y] == 3)
-        {
+        {          
             score++;
-            grid[X*N + Y] = 0;
+            grid[X*N + Y] = 0;           
         }
-
+        sem->Get(X*N + Y);
         break;
     case 'l':
-        if(grid[X*N + Y - 1] == 0)Y--;
+        if(grid[X*N + Y - 1] != -1 &&  Y != 1)Y--;
+        sem->Stop();
+        sem->Take(X*N + Y);
         if(grid[X*N + Y] == 3)
         {
             score++;
-            grid[X*N + Y] = 0;
+            grid[X*N + Y] = 0;          
         }
-
+        sem->Get(X*N + Y);
         break;
     case 'r':
-        if(grid[X * N + Y + 1] == 0)Y++;
+        if(grid[X * N + Y + 1] != -1 && Y != 19)Y++;
+        sem->Stop();
+        sem->Take(X*N + Y);
         if(grid[X*N + Y] == 3)
-        {
+        {  
             score++;
             grid[X*N + Y] = 0;
         }
-
+        sem->Get(X*N + Y);
         break;
     default:
         break;

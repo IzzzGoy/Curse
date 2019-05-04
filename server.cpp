@@ -12,7 +12,7 @@ server::server()
         exit(-1);
     }
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(9018);
+    addr.sin_port = htons(6018);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     int bindStatus = bind(serverSock,(struct sockaddr*)&addr,sizeof(addr));
@@ -43,7 +43,12 @@ void* server::BotServis(void *args)
         {
         case STARTGAME:
             cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;
+
+            //botInf->sem->Take(botInf->bot->X * 20 + botInf->bot->Y);
             botInf->bot->Move();
+           // botInf->sem->Get(botInf->bot->X * 20 + botInf->bot->Y);
+
+
             x = abs(botInf->bot->X - botInf->bot->realX);
             y = abs(botInf->bot->Y - botInf->bot->realY);
             while(!( x < 0.001 && y < 0.01) )
@@ -54,7 +59,7 @@ void* server::BotServis(void *args)
                 std::this_thread::sleep_for(dude);
                 cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;           //Проверка
             }
-            botInf->bot->ClearSteps();
+            //botInf->bot->ClearSteps();
             cout<<"In the end X: "<<botInf->bot->realX<<" Y: "<<botInf->bot->realY<<endl;
             break;
         case WAITING:
@@ -115,21 +120,23 @@ void* server::SelfServis(void* args)
 
                 recv(info->player->socket,&info->player->direction,sizeof(char),0);
 
+                //info->sem->Take(info->player->X * 20 + info->player->Y);
                 info->player->Move();
+                //info->sem->Get(info->player->X * 20 + info->player->Y);
 
                 x = abs(info->player->X - info->player->realX);
                 y = abs(info->player->Y - info->player->realY);
 
                while(!( x < 0.001 && y < 0.01) )
-                {
-                    cout<<"Player behind X:"<<info->player->realX<<" and Y: "<<info->player->realY<<endl;
+                {           
                     send(info->player->socket,info->coord,sizeof(Coordinats),0);
                     info->player->Step();
                     x = abs(info->player->X - info->player->realX);
                     y = abs(info->player->Y - info->player->realY);
+                    cout<<"Player behind X:"<<info->player->realX<<" and Y: "<<info->player->realY<<endl;
                     std::this_thread::sleep_for(dude); //Задержка, чтобы time(NULL) выводил действительно случайные значения
                 }
-               info->player->ClearSteps();
+               //info->player->ClearSteps();
             }
 
             break;
@@ -173,7 +180,7 @@ bool server::DoServer(int numb)
         int acceptSocket = accept(serverSock,0,0);
         if (acceptSocket > 0)
         {
-            players[i] = new RealPlay(grid, acceptSocket);
+            players[i] = new RealPlay(grid, acceptSocket,&semaf);
             coordinats->X[i] = &players[i]->realX;
             coordinats->Y[i] = &players[i]->realY;
             Contex* mess = new Contex(players[i],serverState,grid,coordinats);
@@ -191,11 +198,11 @@ bool server::DoServer(int numb)
     {
         this_thread::sleep_for(threadT);
 //        BotPlayer tmp(grid);
-        bots[i - numb] = new BotPlayer(grid);
+        bots[i - numb] = new BotPlayer(grid,&semaf);
 
         coordinats->X[i] = &bots[i - numb]->realX;
         coordinats->Y[i] = &bots[i - numb]->realY;
-        BotInfo* bot = new BotInfo(&serverState,bots[i - numb]);
+        BotInfo* bot = new BotInfo(&serverState,bots[i - numb],&semaf);
         botsi[i - numb] = bot;
         pthread_create(&threads[i],0,BotServis,static_cast<void*>(botsi[i - numb]));
 

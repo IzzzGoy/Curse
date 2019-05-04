@@ -1,7 +1,7 @@
 #include "botplayer.h"
 #include <iostream>
 
-BotPlayer::BotPlayer(int* _grid)
+BotPlayer::BotPlayer(int* _grid, Semaf *sem)
 {
     std::cout << "bot _grid: " << _grid << std::endl;
     grid = _grid;
@@ -39,6 +39,7 @@ BotPlayer::BotPlayer(int* _grid)
         break;
     }
     direction = 'u';
+    this->sem = sem;
 }
 
 void BotPlayer::Move()
@@ -47,7 +48,7 @@ void BotPlayer::Move()
     switch (direction)
     {
     case 'u':
-        if(grid[(X - 1)*N + Y] != 0 && abs(X-0)<0.1 )
+        if(grid[(X - 1)*N + Y] == -1 || X == 0)
         {
             ChangeDir();
             Move();
@@ -55,15 +56,18 @@ void BotPlayer::Move()
         else
         {
             X--;
+            sem->Stop();
+            sem->Take(X*N + Y);
             if(grid[X*N + Y] == 3)
             {
                 score++;
                 grid[X*N + Y] = 0;
             }
+            sem->Get(X*N + Y);
         }
         break;
     case 'd':
-        if(grid[(X + 1) * N + Y] != 0 && X < 20)
+        if(grid[(X + 1) * N + Y] != 0 || X == 19)
         {
             ChangeDir();
             Move();
@@ -71,15 +75,18 @@ void BotPlayer::Move()
         else
         {
             X++;
+            sem->Stop();
+            sem->Take(X*N + Y);
             if(grid[X*N + Y] == 3)
             {
                 score++;
                 grid[X*N + Y] = 0;
             }
+            sem->Get(X*N + Y);
         }
         break;
     case 'l':
-        if(grid[X*N + Y - 1] != 0 && abs(Y-0)<0.1)
+        if(grid[X*N + Y - 1] != 0 ||  Y == 0)
         {
             ChangeDir();
             Move();
@@ -87,17 +94,20 @@ void BotPlayer::Move()
         else
         {
             Y--;
+            sem->Stop();
+            sem->Take(X*N + Y);
             if(grid[X*N + Y] == 3)
             {
                 score++;
                 grid[X*N + Y] = 0;
             }
+            sem->Get(X*N + Y);
         }
 
         break;
 
     case 'r':
-        if(grid[X * N + Y + 1] != 0 && Y < 20)
+        if(grid[X * N + Y + 1] != 0 || Y == 19)
         {
             ChangeDir();
             Move();
@@ -105,11 +115,14 @@ void BotPlayer::Move()
         else
         {
             Y++;
+            sem->Stop();
+            sem->Take(X*N + Y);
             if(grid[X*N + Y] == 3)
             {
                 score++;
                 grid[X*N + Y] = 0;
             }
+            sem->Get(X*N + Y);
         }
         break;
     default:
@@ -145,6 +158,7 @@ void BotPlayer::ChangeDir()
             direction = posDir[i];
             break;
         }
+        i++;
     }
 
 }

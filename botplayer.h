@@ -5,7 +5,7 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
-
+#include "semaf.h"
 
 class BotPlayer
 {
@@ -14,6 +14,7 @@ private:
     char posDir[4] = {'u','d','l','r'};
     int N =20;
 public:
+    Semaf* sem;
     int* grid;
     int X,Y;
     double realX,realY;
@@ -21,7 +22,7 @@ public:
     int score;
     char direction;
 
-    BotPlayer(int* _grid);
+    BotPlayer(int* _grid,Semaf* sem);
     void Move();
     void Step();
     void ClearSteps();

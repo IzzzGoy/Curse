@@ -19,6 +19,7 @@
 
 #include "realplay.h"
 #include "botplayer.h"
+#include "semaf.h"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ private:
         RESULTS,
         END
     };
-
+    Semaf semaf;
     int serverSock;
     struct sockaddr_in addr;
     int grid[400] = {0};
@@ -79,6 +80,7 @@ public:
 
     struct Contex
     {
+        //Semaf* sem;
         Coordinats* coord;
         int* grid;
         RealPlay* player;
@@ -96,10 +98,12 @@ public:
     {
         State* serverState;
         BotPlayer* bot;
-        BotInfo(State* _serverState, BotPlayer* _bot)
+        Semaf* sem;
+        BotInfo(State* _serverState, BotPlayer* _bot,Semaf* _sem)
         {
             serverState =_serverState;
             bot = _bot;
+            sem = _sem;
         }
         ~BotInfo()
         {

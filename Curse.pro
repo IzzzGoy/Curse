@@ -29,14 +29,16 @@ SOURCES += \
     realplay.cpp \
     server.cpp \
     client.cpp \
-    botplayer.cpp
+    botplayer.cpp \
+    semaf.cpp
 
 HEADERS += \
         mainwindow.h \
     realplay.h \
     server.h \
     client.h \
-    botplayer.h
+    botplayer.h \
+    semaf.h
 
 FORMS += \
         mainwindow.ui
