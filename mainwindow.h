@@ -39,7 +39,8 @@ private slots:
 
     void on_minusButton_clicked();
 
-
+protected:
+    void keyPressEvent(QKeyEvent* e);
 
 private:
     int numbOfPlayers;

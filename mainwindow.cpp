@@ -92,3 +92,24 @@ void MainWindow::on_minusButton_clicked()
         ui->label_2->setText(QString("%1").arg(numbOfPlayers));
     }
 }
+
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+    char key = e->key();
+    if(key == 'W'||key == 'w')
+    {
+        _client.setdirection('u');
+    }
+    else if(key == 'S'||key == 's')
+    {
+        _client.setdirection('d');
+    }
+    else if(key == 'A'||key == 'a')
+    {
+        _client.setdirection('l');
+    }
+    else if(key == 'D'||key == 'd')
+    {
+        _client.setdirection('r');
+    }
+}
