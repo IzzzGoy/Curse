@@ -93,11 +93,12 @@ void* server::SelfServis(void* args)
     fcntl(info->player->socket, F_SETFL, O_NONBLOCK);
     double x,y;
 
-
-    char b = 'B';
+    bool state = true;
+    //char b = 'B';
 
     while(true)
     {
+
         switch (*info->serverState)
         {
         case START:
@@ -113,35 +114,33 @@ void* server::SelfServis(void* args)
             {
                 cout<<"player "<<i<<" in X: "<<*info->coord->X[i]<<" Y:"<<*info->coord->Y[i]<<endl;
             }
-            send(info->player->socket,&b,sizeof(char),0);
 
-            while(*info->serverState == STARTGAME)
+
+
+            recv(info->player->socket,&info->player->direction,sizeof(char),0);
+
+
+            info->player->Move();
+
+            x = abs(info->player->X - info->player->realX);
+            y = abs(info->player->Y - info->player->realY);
+
+            while(!( x < 0.001 && y < 0.01) )
             {
-
-                recv(info->player->socket,&info->player->direction,sizeof(char),0);
-
-                //info->sem->Take(info->player->X * 20 + info->player->Y);
-                info->player->Move();
-                //info->sem->Get(info->player->X * 20 + info->player->Y);
-
+                send(info->player->socket,&state,sizeof(bool),0);
+                send(info->player->socket,info->coord,sizeof(Coordinats),0);
+                info->player->Step();
                 x = abs(info->player->X - info->player->realX);
                 y = abs(info->player->Y - info->player->realY);
-
-               while(!( x < 0.001 && y < 0.01) )
-                {           
-                    send(info->player->socket,info->coord,sizeof(Coordinats),0);
-                    info->player->Step();
-                    x = abs(info->player->X - info->player->realX);
-                    y = abs(info->player->Y - info->player->realY);
-                    cout<<"Player behind X:"<<info->player->realX<<" and Y: "<<info->player->realY<<endl;
-                    std::this_thread::sleep_for(dude); //Задержка, чтобы time(NULL) выводил действительно случайные значения
-                }
-               //info->player->ClearSteps();
+                cout<<"Player behind X:"<<info->player->realX<<" and Y: "<<info->player->realY<<endl;
+                std::this_thread::sleep_for(dude); //Задержка, чтобы time(NULL) выводил действительно случайные значения
             }
 
             break;
 
         case RESULTS:
+            state = false;
+            send(info->player->socket,&state,sizeof(bool),0);
 
             break;
 
@@ -180,7 +179,7 @@ bool server::DoServer(int numb)
         int acceptSocket = accept(serverSock,0,0);
         if (acceptSocket > 0)
         {
-            players[i] = new RealPlay(grid, acceptSocket,&semaf);
+            players[i] = new RealPlay(grid, acceptSocket,&semaf,i);
             coordinats->X[i] = &players[i]->realX;
             coordinats->Y[i] = &players[i]->realY;
             Contex* mess = new Contex(players[i],serverState,grid,coordinats);

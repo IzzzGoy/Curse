@@ -1,6 +1,6 @@
 #include "realplay.h"
 #include <iostream>
-RealPlay::RealPlay(int* _grid,int sock,Semaf* sem)
+RealPlay::RealPlay(int* _grid, int sock, Semaf* sem, int id)
 {
     srand(time(NULL));
     std::cout << "_grid: " << _grid << std::endl;
@@ -23,7 +23,7 @@ RealPlay::RealPlay(int* _grid,int sock,Semaf* sem)
     speed = 0.1;
     direction = 'u';
     this->sem = sem;
-
+    ID = id;
 }
 
 void RealPlay::Move()

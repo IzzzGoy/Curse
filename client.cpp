@@ -20,3 +20,23 @@ void client::CloseClient()
 {
     close(socketClient);
 }
+
+void client::setdirection(char direct)
+{
+    send(socketClient,&direct,sizeof(char),0);
+}
+
+bool client::acceptcoord()
+{
+    bool tmp;
+    recv(socketClient,&tmp,sizeof(bool),0);
+    if(tmp)
+    {
+        recv(socketClient,&coordinats,sizeof(coordinats),0);
+        return true;
+    }
+    else
+    {
+     return false;
+    }
+}

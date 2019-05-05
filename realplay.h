@@ -27,10 +27,11 @@ public:
     int score;
     int socket;
     int* grid;
+    int ID;
 
     void Step();
 
-    RealPlay(int *grid, int sock,Semaf* sem);
+    RealPlay(int *grid, int sock,Semaf* sem,int id);
     //void SetDirection(char s);
 
     void Move ();

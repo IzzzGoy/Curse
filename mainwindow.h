@@ -5,6 +5,8 @@
 #include <server.h>
 #include <client.h>
 #include <pthread.h>
+#include <QTimer>
+#include <QKeyEvent>
 
 namespace Ui {
 class MainWindow;
