@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include <QTimer>
 #include <QKeyEvent>
+#include <unistd.h>
 
 namespace Ui {
 class MainWindow;
@@ -39,10 +40,13 @@ private slots:
 
     void on_minusButton_clicked();
 
+    void showpick();
+
 protected:
     void keyPressEvent(QKeyEvent* e);
 
 private:
+    QTimer* timer;
     int numbOfPlayers;
     server* _server;
     client _client;
@@ -51,6 +55,7 @@ private:
     pthread_t tmp;
 
 
+    void showresults();
 
     struct serverinfo
     {

@@ -70,9 +70,12 @@ void MainWindow::on_toGameButton_clicked()
 //    exit(0);
     ui->stackedWidget->setCurrentIndex(3);
     ui->label_3->setText(QString("%1").arg(0));
-    pthread_join(tmp,NULL);
-    _client.CloseClient();
-    exit(0);
+    timer = new QTimer(this);
+    connect(timer,SIGNAL(timeout()),SLOT(showpick()));
+    timer->start(33);
+//    pthread_join(tmp,NULL);
+//    _client.CloseClient();
+//    exit(0);
 }
 
 void MainWindow::on_plusButton_clicked()
@@ -111,5 +114,29 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     else if(key == 'D'||key == 'd')
     {
         _client.setdirection('r');
+    }
+}
+
+void MainWindow::showresults()
+{
+    /*код отображения результатов*/
+    sleep(10);
+}
+
+void MainWindow::showpick()
+{
+    if(_client.acceptcoord())
+    {
+        /*код перезаполнения таблицы*/
+    }
+    else
+    {
+        showresults();
+        while (!state)
+        {
+            sleep(1);
+        }
+        _client.CloseClient();
+        exit(0);
     }
 }
