@@ -20,7 +20,7 @@ RealPlay::RealPlay(int* _grid, int sock, Semaf* sem, int id)
     realY = Y;
     score = 0;
     socket = sock;
-    speed = 0.1;
+    speed = 0.2;
     direction = 'u';
     this->sem = sem;
     ID = id;

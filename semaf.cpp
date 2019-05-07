@@ -26,5 +26,5 @@ Semaf::~Semaf()
 
 void Semaf::Stop()
 {
-    semop(semId, &op, 1);
+    semop(semId, &op, 0);
 }

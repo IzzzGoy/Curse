@@ -19,7 +19,7 @@ BotPlayer::BotPlayer(int* _grid, Semaf *sem)
     realX = X;
     realY = Y;
     score = 0;
-    speed = 0.1;
+    speed = 0.2;
     int tmp = rand() % 4;
     switch (tmp)
     {

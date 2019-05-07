@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/res"/>
+    <qresource prefix="/">
+        <file>botplayer.cpp</file>
+        <file>botplayer.h</file>
+        <file>client.cpp</file>
+        <file>client.h</file>
+        <file>main.cpp</file>
+        <file>mainwindow.cpp</file>
+        <file>mainwindow.h</file>
+        <file>player.cpp</file>
+        <file>player.h</file>
+        <file>realplay.cpp</file>
+        <file>realplay.h</file>
+        <file>selector.cpp</file>
+        <file>selector.h</file>
+        <file>semaf.cpp</file>
+        <file>semaf.h</file>
+        <file>server.cpp</file>
+        <file>server.h</file>
+        <file>res/no_food.png</file>
+        <file>res/wall.png</file>
+        <file>res/food.png</file>
+    </qresource>
+</RCC>

@@ -8,6 +8,9 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <unistd.h>
+#include <QGraphicsScene>
+#include <QPixmap>
+#include "table.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +21,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    int numbOfPlayers;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     static void* serverservis(void* arg);
@@ -47,26 +51,26 @@ protected:
 
 private:
     QTimer* timer;
-    int numbOfPlayers;
+
     server* _server;
     client _client;
     Ui::MainWindow *ui;
     bool state = false;
     pthread_t tmp;
+    QGraphicsScene* scene;
+    Table table;
 
 
     void showresults();
 
     struct serverinfo
     {
-        bool* state;
         server* _server;
         int numb;
-        serverinfo(int numbOf,server* serv,bool* m)
+        serverinfo(int numbOf,server* serv)
         {
             numb = numbOf;
             _server = serv;
-            state = m;
         }
     };
     serverinfo* serv;

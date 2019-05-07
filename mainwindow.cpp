@@ -8,6 +8,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
     numbOfPlayers = 0;
+    scene = new QGraphicsScene;
+    ui->graphicsView->setScene(scene);
+    ui->graphicsView->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //this->setStyleSheet("background-color: black;");
 }
 MainWindow::~MainWindow()
@@ -20,7 +24,6 @@ void* MainWindow::serverservis(void* arg)
     serverinfo* info = static_cast<serverinfo*>(arg);
     cout<<"Thread server adress: "<<info->_server<<endl;
     info->_server->DoServer(info->numb);
-    *info->state = true;
     pthread_exit(0);
 }
 
@@ -55,7 +58,7 @@ void MainWindow::on_connectButton2_clicked()
     ui->label_3->setText(QString("%1").arg(0));
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),SLOT(showpick()));
-    timer->start(33);
+    timer->start(333);
 
 //    sleep(10);
 //    _client.CloseClient();
@@ -64,7 +67,7 @@ void MainWindow::on_connectButton2_clicked()
 
 void MainWindow::on_toGameButton_clicked()
 {
-    serv = new serverinfo(numbOfPlayers,_server,&state);
+    serv = new serverinfo(numbOfPlayers,_server);
 //    cout<<"Server address: "<<_server<<endl;
 //    cout<<"Info server address:: "<<serv->_server<<endl;
     pthread_create(&tmp,0,serverservis,static_cast<void*>(serv));
@@ -75,7 +78,7 @@ void MainWindow::on_toGameButton_clicked()
     ui->label_3->setText(QString("%1").arg(0));
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),SLOT(showpick()));
-    timer->start(33);
+    timer->start(333);
 //    pthread_join(tmp,NULL);
 //    _client.CloseClient();
 //    exit(0);
@@ -123,22 +126,19 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 void MainWindow::showresults()
 {
     /*код отображения результатов*/
-    sleep(10);
+    sleep(3);
 }
 
 void MainWindow::showpick()
 {
     if(_client.acceptcoord())
     {
-        /*код перезаполнения таблицы*/
+        table.Drow(_client.coordinats.grid,_client.coordinats.X,_client.coordinats.Y,scene);
     }
     else
     {
         showresults();
-        while (!state)
-        {
-            sleep(1);
-        }
+        pthread_join(tmp,NULL);
         _client.CloseClient();
         exit(0);
     }

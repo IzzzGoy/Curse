@@ -30,7 +30,8 @@ SOURCES += \
     server.cpp \
     client.cpp \
     botplayer.cpp \
-    semaf.cpp
+    semaf.cpp \
+    table.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -38,7 +39,11 @@ HEADERS += \
     server.h \
     client.h \
     botplayer.h \
-    semaf.h
+    semaf.h \
+    table.h
 
 FORMS += \
         mainwindow.ui
+
+RESOURCES += \
+    res.qrc

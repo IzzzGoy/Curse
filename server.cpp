@@ -12,7 +12,7 @@ server::server()
         exit(-1);
     }
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(3488);
+    addr.sin_port = htons(1488);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     int bindStatus = bind(serverSock,(struct sockaddr*)&addr,sizeof(addr));
@@ -51,7 +51,7 @@ void* server::BotServis(void *args)
 
             x = abs(botInf->bot->X - botInf->bot->realX);
             y = abs(botInf->bot->Y - botInf->bot->realY);
-            while(!( x < 0.001 && y < 0.01) )
+            while(!( x < 0.001 && y < 0.001) )
             {
                 botInf->bot->Step();
                 x = abs(botInf->bot->X - botInf->bot->realX);
@@ -110,6 +110,7 @@ void* server::SelfServis(void* args)
             break;
 
         case STARTGAME:
+            //send(info->player->socket,&state,sizeof(bool),0);
             for(int i = 0;i<4;i++)
             {
                 cout<<"player "<<i<<" in X: "<<*info->coord->X[i]<<" Y:"<<*info->coord->Y[i]<<endl;
@@ -118,17 +119,19 @@ void* server::SelfServis(void* args)
 
 
             recv(info->player->socket,&info->player->direction,sizeof(char),0);
-
+            send(info->player->socket,&state,sizeof(bool),0);
+            send(info->player->socket,info->coord,sizeof(Coordinats),0);
 
             info->player->Move();
 
             x = abs(info->player->X - info->player->realX);
             y = abs(info->player->Y - info->player->realY);
 
-            while(!( x < 0.001 && y < 0.01) )
+            while(!( x < 0.001 && y < 0.001) )
             {
                 send(info->player->socket,&state,sizeof(bool),0);
                 send(info->player->socket,info->coord,sizeof(Coordinats),0);
+                //send(info->player->socket,&state,sizeof(bool),0);
                 info->player->Step();
                 x = abs(info->player->X - info->player->realX);
                 y = abs(info->player->Y - info->player->realY);
@@ -209,7 +212,7 @@ bool server::DoServer(int numb)
 
     serverState = WAITING;
 
-    chrono::seconds wait(10);
+    chrono::seconds wait(3);
 
     this_thread::sleep_for(wait);
 
@@ -230,9 +233,9 @@ bool server::DoServer(int numb)
 
       chrono::seconds check(1);
       this_thread::sleep_for(check);
-      cout<<"Summ is: "<< summ;
+      cout<<"Summ is: "<< summ<<endl;;
 
-    }while(summ > 1);                //Не 0!!!!!
+    }while(summ < 30);                //Не 0!!!!!
 
     serverState = RESULTS;
 
