@@ -33,7 +33,7 @@ void* server::BotServis(void *args)
 {
     BotInfo* botInf = reinterpret_cast<BotInfo*>(args);
 
-    chrono::milliseconds dude(333);
+    chrono::milliseconds dude(33);
 
     double x,y;
 
@@ -42,7 +42,7 @@ void* server::BotServis(void *args)
         switch (*botInf->serverState)
         {
         case STARTGAME:
-            cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;
+            //cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;
 
             //botInf->sem->Take(botInf->bot->X * 20 + botInf->bot->Y);
             botInf->bot->Move();
@@ -57,10 +57,10 @@ void* server::BotServis(void *args)
                 x = abs(botInf->bot->X - botInf->bot->realX);
                 y = abs(botInf->bot->Y - botInf->bot->realY);
                 std::this_thread::sleep_for(dude);
-                cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;           //Проверка
+               // cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;           //Проверка
             }
             //botInf->bot->ClearSteps();
-            cout<<"In the end X: "<<botInf->bot->realX<<" Y: "<<botInf->bot->realY<<endl;
+            //cout<<"In the end X: "<<botInf->bot->realX<<" Y: "<<botInf->bot->realY<<endl;
             break;
         case WAITING:
             std::this_thread::sleep_for(dude);
@@ -89,7 +89,7 @@ void* server::SelfServis(void* args)
 
     Contex* info = (Contex*) args;
 
-    chrono::milliseconds dude(333);
+    chrono::milliseconds dude(33);
     fcntl(info->player->socket, F_SETFL, O_NONBLOCK);
     double x,y;
 
@@ -111,14 +111,17 @@ void* server::SelfServis(void* args)
 
         case STARTGAME:
             //send(info->player->socket,&state,sizeof(bool),0);
-            for(int i = 0;i<4;i++)
+//            for(int i = 0;i<4;i++)
+//            {
+//                cout<<"player "<<i<<" in X: "<<*info->coord->X[i]<<" Y:"<<*info->coord->Y[i]<<endl;
+//            }
+
+
+
+            if(recv(info->player->socket,&info->player->direction,sizeof(char),0) > 0)
             {
-                cout<<"player "<<i<<" in X: "<<*info->coord->X[i]<<" Y:"<<*info->coord->Y[i]<<endl;
+                cout<<"||||||||||||||||"<< info->player->direction;
             }
-
-
-
-            recv(info->player->socket,&info->player->direction,sizeof(char),0);
             send(info->player->socket,&state,sizeof(bool),0);
             send(info->player->socket,info->coord,sizeof(Coordinats),0);
 
@@ -129,13 +132,17 @@ void* server::SelfServis(void* args)
 
             while(!( x < 0.001 && y < 0.001) )
             {
+                if(recv(info->player->socket,&info->player->direction,sizeof(char),0) > 0)
+                {
+                    cout<<"||||||||||||||||"<< info->player->direction;
+                }
                 send(info->player->socket,&state,sizeof(bool),0);
                 send(info->player->socket,info->coord,sizeof(Coordinats),0);
                 //send(info->player->socket,&state,sizeof(bool),0);
                 info->player->Step();
                 x = abs(info->player->X - info->player->realX);
                 y = abs(info->player->Y - info->player->realY);
-                cout<<"Player behind X:"<<info->player->realX<<" and Y: "<<info->player->realY<<endl;
+                //cout<<"Player behind X:"<<info->player->realX<<" and Y: "<<info->player->realY<<endl;
                 std::this_thread::sleep_for(dude); //Задержка, чтобы time(NULL) выводил действительно случайные значения
             }
 
@@ -167,7 +174,7 @@ void* server::SelfServis(void* args)
 
 bool server::DoServer(int numb)
 {
-    chrono::milliseconds dude(333);
+    chrono::milliseconds dude(33);
     chrono::seconds threadT(1);
     numbOfPlayers = numb;
     numbOfBots = 4 - numb;
@@ -235,7 +242,7 @@ bool server::DoServer(int numb)
       this_thread::sleep_for(check);
       cout<<"Summ is: "<< summ<<endl;;
 
-    }while(summ < 30);                //Не 0!!!!!
+    }while(summ < 50);                //Не 0!!!!!
 
     serverState = RESULTS;
 

@@ -3,9 +3,9 @@
 
 BotPlayer::BotPlayer(int* _grid, Semaf *sem)
 {
-    std::cout << "bot _grid: " << _grid << std::endl;
+    //std::cout << "bot _grid: " << _grid << std::endl;
     grid = _grid;
-    std::cout << "bot new grid: " << grid << std::endl;
+    //std::cout << "bot new grid: " << grid << std::endl;
     srand(time(NULL));
     int tmpX,tmpY;
    do
@@ -19,7 +19,7 @@ BotPlayer::BotPlayer(int* _grid, Semaf *sem)
     realX = X;
     realY = Y;
     score = 0;
-    speed = 0.2;
+    speed = 0.1;
     int tmp = rand() % 4;
     switch (tmp)
     {

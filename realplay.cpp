@@ -3,10 +3,10 @@
 RealPlay::RealPlay(int* _grid, int sock, Semaf* sem, int id)
 {
     srand(time(NULL));
-    std::cout << "_grid: " << _grid << std::endl;
+    //std::cout << "_grid: " << _grid << std::endl;
     grid = _grid;
-    std::cout << "new grid: " << grid << std::endl;
-    std::cout << "0 " << grid[0];
+    //std::cout << "new grid: " << grid << std::endl;
+    //std::cout << "0 " << grid[0];
     int tmpX,tmpY;
     do
     {
@@ -20,7 +20,7 @@ RealPlay::RealPlay(int* _grid, int sock, Semaf* sem, int id)
     realY = Y;
     score = 0;
     socket = sock;
-    speed = 0.2;
+    speed = 0.1;
     direction = 'u';
     this->sem = sem;
     ID = id;
@@ -53,7 +53,7 @@ void RealPlay::Move()
         }
         sem->Get(X*N + Y);
         break;
-    case 'l':
+    case 'w':
         if(grid[X*N + Y - 1] != -1 &&  Y != 1)Y--;
         sem->Stop();
         sem->Take(X*N + Y);

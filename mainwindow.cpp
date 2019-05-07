@@ -58,7 +58,7 @@ void MainWindow::on_connectButton2_clicked()
     ui->label_3->setText(QString("%1").arg(0));
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),SLOT(showpick()));
-    timer->start(333);
+    timer->start(33);
 
 //    sleep(10);
 //    _client.CloseClient();
@@ -78,7 +78,7 @@ void MainWindow::on_toGameButton_clicked()
     ui->label_3->setText(QString("%1").arg(0));
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),SLOT(showpick()));
-    timer->start(333);
+    timer->start(33);
 //    pthread_join(tmp,NULL);
 //    _client.CloseClient();
 //    exit(0);
@@ -105,21 +105,22 @@ void MainWindow::on_minusButton_clicked()
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     char key = e->key();
+    //cout<<key<<"////////////"<<key<<endl;
     if(key == 'W'||key == 'w')
-    {
-        _client.setdirection('u');
-    }
-    else if(key == 'S'||key == 's')
-    {
-        _client.setdirection('d');
-    }
-    else if(key == 'A'||key == 'a')
     {
         _client.setdirection('l');
     }
-    else if(key == 'D'||key == 'd')
+    else if(key == 'S'||key == 's')
     {
         _client.setdirection('r');
+    }
+    else if(key == 'A'||key == 'a')
+    {
+        _client.setdirection('u');
+    }
+    else if(key == 'D'||key == 'd')
+    {
+        _client.setdirection('d');
     }
 }
 
