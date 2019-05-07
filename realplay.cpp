@@ -13,7 +13,7 @@ RealPlay::RealPlay(int* _grid, int sock, Semaf* sem, int id)
         tmpX = rand() % 20;
         tmpY = rand() % 20;
     }
-    while(grid[20*tmpX + tmpY] != 0);
+    while(grid[20*tmpX + tmpY] != 3);
     X = tmpX;
     Y = tmpY;
     realX = X;

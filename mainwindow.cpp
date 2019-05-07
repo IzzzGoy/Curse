@@ -53,6 +53,9 @@ void MainWindow::on_connectButton2_clicked()
     _client.StartClient(tmp.data());
     ui->stackedWidget->setCurrentIndex(3);
     ui->label_3->setText(QString("%1").arg(0));
+    timer = new QTimer(this);
+    connect(timer,SIGNAL(timeout()),SLOT(showpick()));
+    timer->start(33);
 
 //    sleep(10);
 //    _client.CloseClient();
@@ -62,8 +65,8 @@ void MainWindow::on_connectButton2_clicked()
 void MainWindow::on_toGameButton_clicked()
 {
     serv = new serverinfo(numbOfPlayers,_server,&state);
-    cout<<"Server address: "<<_server<<endl;
-    cout<<"Info server address:: "<<serv->_server<<endl;
+//    cout<<"Server address: "<<_server<<endl;
+//    cout<<"Info server address:: "<<serv->_server<<endl;
     pthread_create(&tmp,0,serverservis,static_cast<void*>(serv));
 //    _server->DoServer(numbOfPlayers);
 //    _client.CloseClient();

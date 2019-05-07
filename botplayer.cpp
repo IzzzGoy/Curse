@@ -13,7 +13,7 @@ BotPlayer::BotPlayer(int* _grid, Semaf *sem)
         tmpX = rand() % 20;
         tmpY = rand() % 20;
     }
-    while(grid[20*tmpX + tmpY] != 0);
+    while(grid[20*tmpX + tmpY] != 3);
     X = tmpX;
     Y = tmpY;
     realX = X;
@@ -23,12 +23,12 @@ BotPlayer::BotPlayer(int* _grid, Semaf *sem)
     int tmp = rand() % 4;
     switch (tmp)
     {
-    case 0:
-        direction = 'u';
-        break;
-    case 1:
-        direction = 'd';
-        break;
+        case 0:
+            direction = 'u';
+            break;
+        case 1:
+            direction = 'd';
+            break;
     case 2:
         direction = 'l';
         break;
@@ -67,7 +67,7 @@ void BotPlayer::Move()
         }
         break;
     case 'd':
-        if(grid[(X + 1) * N + Y] != 0 || X == 19)
+        if(grid[(X + 1) * N + Y] == -1 || X == 19)
         {
             ChangeDir();
             Move();
@@ -86,7 +86,7 @@ void BotPlayer::Move()
         }
         break;
     case 'l':
-        if(grid[X*N + Y - 1] != 0 ||  Y == 0)
+        if(grid[X*N + Y - 1] == -1 ||  Y == 0)
         {
             ChangeDir();
             Move();
@@ -107,7 +107,7 @@ void BotPlayer::Move()
         break;
 
     case 'r':
-        if(grid[X * N + Y + 1] != 0 || Y == 19)
+        if(grid[X * N + Y + 1] == -1 || Y == 19)
         {
             ChangeDir();
             Move();
@@ -135,17 +135,25 @@ void BotPlayer::ChangeDir()
 
     bool tmp[4] = {true};
 
-    if(grid[(X - 1)*N + Y] != 0 && X == 0)tmp[0] = false;
-    else tmp[0] = true;
+    if(grid[(X - 1)*N + Y] == -1 || X == 0)
+        tmp[0] = false;
+    else
+        tmp[0] = true;
 
-    if(grid[(X + 1) * N + Y] != 0 && X < 20)tmp[1] = false;
-    else tmp[1] = true;
+    if(grid[(X + 1) * N + Y] == -1 || X < 20)
+        tmp[1] = false;
+    else
+        tmp[1] = true;
 
-    if(grid[X*N + Y - 1] != 0 && Y == 0)tmp[2] = false;
-    else tmp[2] = true;
+    if(grid[X*N + Y - 1] == -1 || Y == 0)
+        tmp[2] = false;
+    else
+        tmp[2] = true;
 
-    if(grid[X * N + Y + 1] != 0 && Y < 20)tmp[3] = false;
-    else tmp[3] = true;
+    if(grid[X * N + Y + 1] == -1 || Y < 20)
+        tmp[3] = false;
+    else
+        tmp[3] = true;
 
     size_t mp = rand()% 4;
     size_t i = mp++;

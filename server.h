@@ -30,7 +30,7 @@ private:
     //vector<RealPlay> players;
     enum State
     {
-        START,
+        START = 0,
         WAITING,
         STARTGAME,
         RESULTS,
@@ -39,18 +39,32 @@ private:
     Semaf semaf;
     int serverSock;
     struct sockaddr_in addr;
-    int grid[400] = {0};
+    int grid[400] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                     -1, 3, 3, 3, 3, 3, 3, 3, 3,-1,-1, 3, 3, 3, 3, 3, 3, 3, 3,-1,
+                     -1, 3,-1, 3, 3,-1,-1,-1, 3, 3, 3, 3,-1,-1,-1, 3, 3,-1, 3,-1,
+                     -1, 3,-1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,-1, 3,-1,
+                     -1, 3,-1,-1,-1, 3, 3,-1,-1, 3, 3,-1,-1, 3, 3,-1,-1,-1, 3,-1,
+                     -1, 3, 3, 3, 3, 3, 3,-1,-1, 3, 3,-1,-1, 3, 3, 3, 3, 3, 3,-1,
+                     -1,-1,-1,-1,-1, 3, 3,-1,-1, 3, 3,-1,-1, 3, 3,-1,-1,-1,-1,-1,
+                     -1, 3, 3, 3,-1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,-1, 3, 3, 3,-1,
+                     -1,-1, 3,-1,-1, 3, 3,-1,-1, 3, 3,-1,-1, 3, 3,-1,-1, 3,-1,-1,
+                      3, 3, 3, 3, 3, 3, 3,-1, 3, 3, 3, 3,-1, 3, 3, 3, 3, 3, 3, 3,
+                      3, 3, 3, 3, 3, 3, 3,-1, 3, 3, 3, 3,-1, 3, 3, 3, 3, 3, 3, 3,
+                     -1,-1, 3,-1,-1, 3, 3,-1,-1,-1,-1,-1,-1, 3, 3,-1,-1, 3,-1,-1,
+                     -1, 3, 3, 3,-1,-1, 3, 3, 3, 3, 3, 3, 3, 3,-1,-1, 3, 3, 3,-1,
+                     -1,-1,-1,-1,-1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,-1,-1,-1,-1,-1,
+                     -1, 3, 3, 3, 3, 3, 3,-1,-1,-1,-1,-1,-1, 3, 3, 3, 3, 3, 3,-1,
+                     -1, 3, 3, 3,-1,-1, 3, 3, 3,-1,-1, 3, 3, 3,-1,-1, 3, 3, 3,-1,
+                     -1,-1,-1, 3, 3, 3, 3,-1, 3, 3, 3, 3,-1, 3, 3, 3, 3,-1,-1,-1,
+                     -1, 3, 3, 3,-1,-1,-1,-1,-1, 3, 3,-1,-1,-1,-1,-1, 3, 3, 3,-1,
+                     -1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,-1,
+                     -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
     vector<RealPlay*> players;
-    //RealPlay *players;
-//    BotPlayer **bots;
 
     State serverState;
     int numbOfPlayers;
     int numbOfBots;
     vector<pthread_t> threads;
-    //pthread_t* threads;
-    //vector<pthread_t> threads;
-    //pthread_t tmp;
 public:
     struct Coordinats
     {
@@ -65,14 +79,6 @@ public:
         int* grid;
         ~Coordinats()
         {
-            for(int i = 0;i < 4; i++)
-            {
-                delete Y[i];
-            }
-            for(int i = 0;i < 4; i++)
-            {
-                delete X[i];
-            }
             X.clear();
             Y.clear();
         }
@@ -80,17 +86,16 @@ public:
 
     struct Contex
     {
-        //Semaf* sem;
         Coordinats* coord;
         int* grid;
         RealPlay* player;
         State* serverState;
-        Contex(RealPlay* _player,State &st,int*table,Coordinats* _coord)
+        Contex(RealPlay* _player,State *st,int*table,Coordinats* _coord)
         {
             coord = _coord;
             grid = table;
             player = _player;
-            serverState = &st;
+            serverState = st;
         }
     };
 
@@ -107,7 +112,6 @@ public:
         }
         ~BotInfo()
         {
-            delete bot;
         }
     };
     vector<BotPlayer*> bots;

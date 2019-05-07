@@ -12,7 +12,7 @@ server::server()
         exit(-1);
     }
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(6018);
+    addr.sin_port = htons(3488);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     int bindStatus = bind(serverSock,(struct sockaddr*)&addr,sizeof(addr));
@@ -182,7 +182,7 @@ bool server::DoServer(int numb)
             players[i] = new RealPlay(grid, acceptSocket,&semaf,i);
             coordinats->X[i] = &players[i]->realX;
             coordinats->Y[i] = &players[i]->realY;
-            Contex* mess = new Contex(players[i],serverState,grid,coordinats);
+            Contex* mess = new Contex(players[i],&serverState,grid,coordinats);
             if(pthread_create(&threads[i],0,&server::SelfServis, static_cast<void*>(mess)) != 0)
             {
                 perror("Bad thread create");
@@ -230,8 +230,9 @@ bool server::DoServer(int numb)
 
       chrono::seconds check(1);
       this_thread::sleep_for(check);
+      cout<<"Summ is: "<< summ;
 
-    }while(summ != 0);                //Не 0!!!!!
+    }while(summ > 1);                //Не 0!!!!!
 
     serverState = RESULTS;
 

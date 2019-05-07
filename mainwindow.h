@@ -20,7 +20,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-        static void* serverservis(void* arg);
+    static void* serverservis(void* arg);
 
 private slots:
 
