@@ -65,10 +65,12 @@ private:
 
     struct serverinfo
     {
+        bool* state;
         server* _server;
         int numb;
-        serverinfo(int numbOf,server* serv)
+        serverinfo(int numbOf,server* serv,bool* state)
         {
+            this->state = state;
             numb = numbOf;
             _server = serv;
         }

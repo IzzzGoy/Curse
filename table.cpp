@@ -1,5 +1,5 @@
 #include "table.h"
-
+#include <iostream>
 Table::Table()
 {
     food.load(":/res/food.png");
@@ -14,23 +14,24 @@ Table::Table()
 
 void Table::Drow(int* grid,vector<double*> X,vector<double*> Y, QGraphicsScene *scene)
 {
+//    std::cout << "Scene in table address: "<<scene;
     for(size_t x = 0; x < 20; x++)
     {
         for(size_t y = 0; y < 20; y++)
         {
-            if(grid[x * 20 + y] == -1)
+            if(grid[x + 20 * y] == -1)
             {
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(wall);
                 tmp->setPos(x*20,y*20);
             }
-            else if(grid[x * 20 + y] == 0)
+            else if(grid[x + 20 * y] == 0)
             {
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(no_food);
                 tmp->setPos(x*20,y*20);
             }
-            else if(grid[x * 20 + y] == 3)
+            else if(grid[x + 20 * y] == 3)
             {
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(food);
@@ -45,6 +46,6 @@ void Table::Drow(int* grid,vector<double*> X,vector<double*> Y, QGraphicsScene *
 
     for(size_t i = 0;i < 4;i++)
     {
-        players[i]->setPos(*X[i] * 20, *Y[i] * 20);
+        players[i]->setPos(*Y[i] * 20,*X[i] * 20);
     }
 }

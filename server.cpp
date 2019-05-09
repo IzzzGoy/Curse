@@ -12,7 +12,7 @@ server::server()
         exit(-1);
     }
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(1488);
+    addr.sin_port = htons(6488);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     int bindStatus = bind(serverSock,(struct sockaddr*)&addr,sizeof(addr));
@@ -44,10 +44,8 @@ void* server::BotServis(void *args)
         case STARTGAME:
             //cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;
 
-            //botInf->sem->Take(botInf->bot->X * 20 + botInf->bot->Y);
             botInf->bot->Move();
-           // botInf->sem->Get(botInf->bot->X * 20 + botInf->bot->Y);
-
+            this_thread::sleep_for(dude);
 
             x = abs(botInf->bot->X - botInf->bot->realX);
             y = abs(botInf->bot->Y - botInf->bot->realY);
@@ -57,10 +55,9 @@ void* server::BotServis(void *args)
                 x = abs(botInf->bot->X - botInf->bot->realX);
                 y = abs(botInf->bot->Y - botInf->bot->realY);
                 std::this_thread::sleep_for(dude);
-               // cout<<"I am behind X:"<<botInf->bot->realX<<" and Y: "<<botInf->bot->realY<<endl;           //Проверка
+
             }
-            //botInf->bot->ClearSteps();
-            //cout<<"In the end X: "<<botInf->bot->realX<<" Y: "<<botInf->bot->realY<<endl;
+
             break;
         case WAITING:
             std::this_thread::sleep_for(dude);
@@ -120,22 +117,19 @@ void* server::SelfServis(void* args)
 
             if(recv(info->player->socket,&info->player->direction,sizeof(char),0) > 0)
             {
-                cout<<"||||||||||||||||"<< info->player->direction;
+                //cout<<"||||||||||||||||"<< info->player->direction;
             }
             send(info->player->socket,&state,sizeof(bool),0);
             send(info->player->socket,info->coord,sizeof(Coordinats),0);
 
             info->player->Move();
+            this_thread::sleep_for(dude);
 
             x = abs(info->player->X - info->player->realX);
             y = abs(info->player->Y - info->player->realY);
 
             while(!( x < 0.001 && y < 0.001) )
             {
-                if(recv(info->player->socket,&info->player->direction,sizeof(char),0) > 0)
-                {
-                    cout<<"||||||||||||||||"<< info->player->direction;
-                }
                 send(info->player->socket,&state,sizeof(bool),0);
                 send(info->player->socket,info->coord,sizeof(Coordinats),0);
                 //send(info->player->socket,&state,sizeof(bool),0);
@@ -172,7 +166,7 @@ void* server::SelfServis(void* args)
 }
 
 
-bool server::DoServer(int numb)
+void server::DoServer(int numb)
 {
     chrono::milliseconds dude(33);
     chrono::seconds threadT(1);
@@ -203,17 +197,18 @@ bool server::DoServer(int numb)
     }
 //    bots = new BotPlayer*[4-numb];
     bots.resize(numbOfBots);
-    for(int i = numb;i < 4; i++)
+    for(int i = 0;i < numbOfBots; i++)
     {
         this_thread::sleep_for(threadT);
 //        BotPlayer tmp(grid);
-        bots[i - numb] = new BotPlayer(grid,&semaf);
+        bots[i] = new BotPlayer(grid,&semaf);
 
-        coordinats->X[i] = &bots[i - numb]->realX;
-        coordinats->Y[i] = &bots[i - numb]->realY;
-        BotInfo* bot = new BotInfo(&serverState,bots[i - numb],&semaf);
-        botsi[i - numb] = bot;
-        pthread_create(&threads[i],0,BotServis,static_cast<void*>(botsi[i - numb]));
+        coordinats->X[i + numbOfPlayers] = &bots[i]->realX;
+        coordinats->Y[i + numbOfPlayers] = &bots[i]->realY;
+        BotInfo* bot = new BotInfo(&serverState,bots[i],&semaf);
+        botsi[i] = bot;
+        //cout<<"bot "<< i <<" "<<bot<<endl;
+        pthread_create(&threads[numbOfPlayers + i],0,BotServis,static_cast<void*>(bot));
 
     }
 
@@ -229,12 +224,13 @@ bool server::DoServer(int numb)
     do
     {
       summ = 0;
-      for(int i = 0; i < numbOfPlayers; i++)
+      for(int i = 0; i < players.size(); i++)
       {
           summ += players[i]->score;
       }
-      for(int i = 0; i < 4 - numbOfPlayers; i++)
+      for(int i = 0; i < bots.size(); i++)
       {
+          //cout<<"bot in summ "<< i << " "<< bots[i]<<endl;
           summ += bots[i]->score;
       }
 
@@ -242,7 +238,7 @@ bool server::DoServer(int numb)
       this_thread::sleep_for(check);
       cout<<"Summ is: "<< summ<<endl;;
 
-    }while(summ < 50);                //Не 0!!!!!
+    }while(summ < 80);                //Не 0!!!!!
 
     serverState = RESULTS;
 
@@ -263,7 +259,7 @@ bool server::DoServer(int numb)
     }
     close(serverSock);
 
-    return true;
+    return;
 
 }
 

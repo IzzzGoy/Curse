@@ -19,7 +19,7 @@ BotPlayer::BotPlayer(int* _grid, Semaf *sem)
     realX = X;
     realY = Y;
     score = 0;
-    speed = 0.1;
+    speed = 0.05;
     int tmp = rand() % 4;
     switch (tmp)
     {
@@ -38,8 +38,9 @@ BotPlayer::BotPlayer(int* _grid, Semaf *sem)
     default:
         break;
     }
-    direction = 'u';
+//    direction = 'u';
     this->sem = sem;
+//    std::cout<<"Sem addr: "<<sem<<std::endl;
 }
 
 void BotPlayer::Move()
@@ -51,7 +52,7 @@ void BotPlayer::Move()
         if(grid[(X - 1)*N + Y] == -1 || X == 0)
         {
             ChangeDir();
-            Move();
+            //Move();
         }
         else
         {
@@ -70,7 +71,7 @@ void BotPlayer::Move()
         if(grid[(X + 1) * N + Y] == -1 || X == 19)
         {
             ChangeDir();
-            Move();
+//            Move();
         }
         else
         {
@@ -89,7 +90,7 @@ void BotPlayer::Move()
         if(grid[X*N + Y - 1] == -1 ||  Y == 0)
         {
             ChangeDir();
-            Move();
+//            Move();
         }
         else
         {
@@ -110,7 +111,7 @@ void BotPlayer::Move()
         if(grid[X * N + Y + 1] == -1 || Y == 19)
         {
             ChangeDir();
-            Move();
+//            Move();
         }
         else
         {
@@ -133,7 +134,7 @@ void BotPlayer::Move()
 void BotPlayer::ChangeDir()
 {
 
-    bool tmp[4] = {true};
+    /*bool tmp[4] = {true,true,true,true};
 
     if(grid[(X - 1)*N + Y] == -1 || X == 0)
         tmp[0] = false;
@@ -155,10 +156,10 @@ void BotPlayer::ChangeDir()
     else
         tmp[3] = true;
 
-    size_t mp = rand()% 4;
-    size_t i = mp++;
+/*    size_t mp = rand()% 4;
+    size_t i = mp + 1;
 
-    while(mp != i)
+    while(true)
     {
         if(i > 3) i = 0;
         if(tmp[i])
@@ -167,11 +168,20 @@ void BotPlayer::ChangeDir()
             break;
         }
         i++;
-    }
+    }*/
+    /*for(size_t i = 0; i < 4;i++)
+    {
+        if(tmp[i])
+        {
+            direction = posDir[i];
+            break;
+        }
+    }*/
 
 }
 void BotPlayer::Step()
 {
+    std::chrono::milliseconds dude(33);
     switch (this->direction)
     {
     case 'u':
@@ -193,6 +203,7 @@ void BotPlayer::Step()
     default:
         break;
     }
+    std::this_thread::sleep_for(dude);
 }
 
 void BotPlayer::ClearSteps()

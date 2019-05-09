@@ -77,11 +77,11 @@ public:
         std::vector<double*> Y;
         vector <double*> X;
         int* grid;
-        ~Coordinats()
+        /*~Coordinats()
         {
             X.clear();
             Y.clear();
-        }
+        }*/
     };
 
     struct Contex
@@ -119,7 +119,7 @@ public:
     Coordinats* coordinats;
     static void* SelfServis(void* args);
     static void* BotServis(void* args);
-    bool DoServer(int numbOfPlayers);
+    void DoServer(int numbOfPlayers);
 
     void SetReal(int numb);
     server();

@@ -8,6 +8,9 @@
 #include <iostream>
 #include <unistd.h>
 #include <vector>
+#include <chrono>
+#include <thread>
+#include <fcntl.h>
 
 using namespace std;
 
@@ -25,6 +28,8 @@ public:
     client();
     void setdirection(char direct);
     bool acceptcoord();
+    bool t;
+    char direction = 'u';
 
 
     struct Coordinats
@@ -32,7 +37,7 @@ public:
         vector<double*> Y;
         vector <double*> X;
         int* grid;
-        ~Coordinats()
+        /*~Coordinats()
         {
             for(int i = 0;i < 4; i++)
             {
@@ -44,7 +49,7 @@ public:
             }
             X.clear();
             Y.clear();
-        }
+        }*/
     };
     Coordinats coordinats;
 };

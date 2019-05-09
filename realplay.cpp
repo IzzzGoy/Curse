@@ -20,10 +20,11 @@ RealPlay::RealPlay(int* _grid, int sock, Semaf* sem, int id)
     realY = Y;
     score = 0;
     socket = sock;
-    speed = 0.1;
+    speed = 0.05;
     direction = 'u';
     this->sem = sem;
     ID = id;
+    std::cout<<"Sem addr: "<<sem<<std::endl;
 }
 
 void RealPlay::Move()
@@ -49,18 +50,18 @@ void RealPlay::Move()
         if(grid[X*N + Y] == 3)
         {          
             score++;
-            grid[X*N + Y] = 0;           
+            grid[X*N + Y] = 0;
         }
         sem->Get(X*N + Y);
         break;
-    case 'w':
+    case 'l':
         if(grid[X*N + Y - 1] != -1 &&  Y != 1)Y--;
         sem->Stop();
         sem->Take(X*N + Y);
         if(grid[X*N + Y] == 3)
         {
             score++;
-            grid[X*N + Y] = 0;          
+            grid[X*N + Y] = 0;
         }
         sem->Get(X*N + Y);
         break;
@@ -82,6 +83,7 @@ void RealPlay::Move()
 
 void RealPlay::Step()
 {
+    std::chrono::milliseconds dude (33);
     switch (this->direction)
     {
     case 'u':
@@ -103,6 +105,7 @@ void RealPlay::Step()
     default:
         break;
     }
+    std::this_thread::sleep_for(dude);
 }
 
 void RealPlay::ClearSteps()

@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cmath>
 #include "semaf.h"
+#include <thread>
 
 class BotPlayer
 {
