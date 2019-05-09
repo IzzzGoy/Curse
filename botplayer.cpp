@@ -65,6 +65,7 @@ void BotPlayer::Move()
                 grid[X*N + Y] = 0;
             }
             sem->Get(X*N + Y);
+            return;
         }
         break;
     case 'd':
@@ -84,6 +85,7 @@ void BotPlayer::Move()
                 grid[X*N + Y] = 0;
             }
             sem->Get(X*N + Y);
+            return;
         }
         break;
     case 'l':
@@ -103,6 +105,7 @@ void BotPlayer::Move()
                 grid[X*N + Y] = 0;
             }
             sem->Get(X*N + Y);
+            return;
         }
 
         break;
@@ -124,6 +127,7 @@ void BotPlayer::Move()
                 grid[X*N + Y] = 0;
             }
             sem->Get(X*N + Y);
+            return;
         }
         break;
     default:

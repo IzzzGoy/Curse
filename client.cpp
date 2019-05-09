@@ -30,7 +30,7 @@ void client::setdirection(char direct)
 bool client::acceptcoord()
 {
     chrono::milliseconds dude(33);
-    this_thread::sleep_for(dude);
+//    this_thread::sleep_for(dude);
     recv(socketClient,&t,sizeof(bool),0);
     if(t)
     {

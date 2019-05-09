@@ -49,13 +49,23 @@ void* server::BotServis(void *args)
 
             x = abs(botInf->bot->X - botInf->bot->realX);
             y = abs(botInf->bot->Y - botInf->bot->realY);
-            while(!( x < 0.001 && y < 0.001) )
+            if(!( x < 0.001 && y < 0.001) )
             {
-                botInf->bot->Step();
-                x = abs(botInf->bot->X - botInf->bot->realX);
-                y = abs(botInf->bot->Y - botInf->bot->realY);
-                std::this_thread::sleep_for(dude);
+                while(!( x < 0.001 && y < 0.001) )
+                {
+                    botInf->bot->Step();
+                    x = abs(botInf->bot->X - botInf->bot->realX);
+                    y = abs(botInf->bot->Y - botInf->bot->realY);
+                    std::this_thread::sleep_for(dude);
 
+                }
+            }
+            else
+            {
+                for(size_t i = 0; i < 1/botInf->bot->speed;i++)
+                {
+                    this_thread::sleep_for(dude);
+                }
             }
 
             break;
